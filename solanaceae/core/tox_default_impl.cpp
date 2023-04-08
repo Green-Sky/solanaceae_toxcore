@@ -113,6 +113,16 @@ std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> ToxDefaultImpl:
 	}
 }
 
+std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> ToxDefaultImpl::toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) {
+	Tox_Err_Conference_Join err = TOX_ERR_CONFERENCE_JOIN_OK;
+	auto res = tox_conference_join(_tox, friend_number, cookie.data(), cookie.size(), &err);
+	if (err == TOX_ERR_CONFERENCE_JOIN_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
 Tox_Err_Conference_Send_Message ToxDefaultImpl::toxConferenceSendMessage(uint32_t conference_number, Tox_Message_Type type, std::string_view message) {
 	Tox_Err_Conference_Send_Message err = TOX_ERR_CONFERENCE_SEND_MESSAGE_OK;
 	tox_conference_send_message(_tox, conference_number, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &err);

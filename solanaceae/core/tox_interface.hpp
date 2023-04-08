@@ -50,7 +50,32 @@ struct ToxI_raw {
 	// files
 
 	// conferece
+	//bool tox_conference_delete(Tox *tox, uint32_t conference_number, Tox_Err_Conference_Delete *error);
+	//uint32_t tox_conference_peer_count(const Tox *tox, uint32_t conference_number, Tox_Err_Conference_Peer_Query *error);
+	//size_t tox_conference_peer_get_name_size(const Tox *tox, uint32_t conference_number, uint32_t peer_number,
+	//bool tox_conference_peer_get_name(const Tox *tox, uint32_t conference_number, uint32_t peer_number, uint8_t *name,
+	//bool tox_conference_peer_get_public_key(const Tox *tox, uint32_t conference_number, uint32_t peer_number,
+	//bool tox_conference_peer_number_is_ours(const Tox *tox, uint32_t conference_number, uint32_t peer_number,
+	//uint32_t tox_conference_offline_peer_count(const Tox *tox, uint32_t conference_number,
+	//size_t tox_conference_offline_peer_get_name_size(const Tox *tox, uint32_t conference_number,
+	//bool tox_conference_offline_peer_get_name(const Tox *tox, uint32_t conference_number, uint32_t offline_peer_number,
+	//bool tox_conference_offline_peer_get_public_key(const Tox *tox, uint32_t conference_number,
+	//uint64_t tox_conference_offline_peer_get_last_active(const Tox *tox, uint32_t conference_number,
+	//bool tox_conference_set_max_offline(Tox *tox, uint32_t conference_number, uint32_t max_offline_peers, Tox_Err_Conference_Set_Max_Offline *error);
+	//bool tox_conference_invite(Tox *tox, uint32_t friend_number, uint32_t conference_number, Tox_Err_Conference_Invite *error);
+	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) = 0;
 	virtual Tox_Err_Conference_Send_Message toxConferenceSendMessage(uint32_t conference_number, Tox_Message_Type type, std::string_view message) = 0;
+	//size_t tox_conference_get_title_size(const Tox *tox, uint32_t conference_number, Tox_Err_Conference_Title *error);
+	//bool tox_conference_get_title(const Tox *tox, uint32_t conference_number, uint8_t *title, Tox_Err_Conference_Title *error);
+	//bool tox_conference_set_title(Tox *tox, uint32_t conference_number, const uint8_t *title, size_t length, Tox_Err_Conference_Title *error);
+	//size_t tox_conference_get_chatlist_size(const Tox *tox);
+	//void tox_conference_get_chatlist(const Tox *tox, uint32_t *chatlist);
+	//Tox_Conference_Type tox_conference_get_type(const Tox *tox, uint32_t conference_number, Tox_Err_Conference_Get_Type *error);
+	//bool tox_conference_get_id(const Tox *tox, uint32_t conference_number, uint8_t *id);
+	//uint32_t tox_conference_by_id(const Tox *tox, const uint8_t *id, Tox_Err_Conference_By_Id *error);
+	//bool tox_conference_get_uid(const Tox *tox, uint32_t conference_number, uint8_t *uid);
+	//uint32_t tox_conference_by_uid(const Tox *tox, const uint8_t *uid, Tox_Err_Conference_By_Uid *error);
+
 
 	virtual Tox_Err_Friend_Custom_Packet toxFriendSendLossyPacket(uint32_t friend_number, const std::vector<uint8_t>& data) = 0;
 	virtual Tox_Err_Friend_Custom_Packet toxFriendSendLosslessPacket(uint32_t friend_number, const std::vector<uint8_t>& data) = 0;
