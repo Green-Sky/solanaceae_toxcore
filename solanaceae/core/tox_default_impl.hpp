@@ -35,6 +35,12 @@ struct ToxDefaultImpl : public ToxI {
 	std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> toxFriendSendMessage(uint32_t friend_number, Tox_Message_Type type, std::string_view message) override;
 
 	// files
+	Tox_Err_File_Control toxFileControl(uint32_t friend_number, uint32_t file_number, Tox_File_Control control) override;
+	Tox_Err_File_Seek toxFileSeek(uint32_t friend_number, uint32_t file_number, uint64_t position) override;
+	std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_File_Get> toxFileGetFileID(uint32_t friend_number, uint32_t file_number) override;
+	std::tuple<std::optional<uint32_t>, Tox_Err_File_Send> toxFileSend(uint32_t friend_number, uint32_t kind, uint64_t file_size, const std::vector<uint8_t>& file_id, std::string_view filename) override;
+	Tox_Err_File_Send_Chunk toxFileSendChunk(uint32_t friend_number, uint32_t file_number, uint64_t position, const std::vector<uint8_t>& data) override;
+
 	// conferece
 	std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) override;
 	Tox_Err_Conference_Send_Message toxConferenceSendMessage(uint32_t conference_number, Tox_Message_Type type, std::string_view message) override;

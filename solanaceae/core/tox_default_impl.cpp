@@ -1,4 +1,5 @@
 #include "./tox_default_impl.hpp"
+#include <optional>
 
 Tox_Connection ToxDefaultImpl::toxSelfGetConnectionStatus(void) {
 	return tox_self_get_connection_status(_tox);
@@ -111,6 +112,46 @@ std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> ToxDefaultImpl:
 	} else {
 		return {std::nullopt, err};
 	}
+}
+
+Tox_Err_File_Control ToxDefaultImpl::toxFileControl(uint32_t friend_number, uint32_t file_number, Tox_File_Control control) {
+	Tox_Err_File_Control err = TOX_ERR_FILE_CONTROL_OK;
+	tox_file_control(_tox, friend_number, file_number, control, &err);
+	return err;
+}
+
+Tox_Err_File_Seek ToxDefaultImpl::toxFileSeek(uint32_t friend_number, uint32_t file_number, uint64_t position) {
+	Tox_Err_File_Seek err = TOX_ERR_FILE_SEEK_OK;
+	tox_file_seek(_tox, friend_number, file_number, position, &err);
+	return err;
+}
+
+std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_File_Get> ToxDefaultImpl::toxFileGetFileID(uint32_t friend_number, uint32_t file_number) {
+	Tox_Err_File_Get err = TOX_ERR_FILE_GET_OK;
+	std::vector<uint8_t> id(TOX_FILE_ID_LENGTH);
+	tox_file_get_file_id(_tox, friend_number, file_number, id.data(), &err);
+	if (err == TOX_ERR_FILE_GET_OK) {
+		return {id, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<uint32_t>, Tox_Err_File_Send> ToxDefaultImpl::toxFileSend(uint32_t friend_number, uint32_t kind, uint64_t file_size, const std::vector<uint8_t>& file_id, std::string_view filename) {
+	// TODO: check file_id size
+	Tox_Err_File_Send err = TOX_ERR_FILE_SEND_OK;
+	auto res = tox_file_send(_tox, friend_number, kind, file_size, file_id.data(), reinterpret_cast<const uint8_t*>(filename.data()), filename.size(), &err);
+	if (err == TOX_ERR_FILE_SEND_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+Tox_Err_File_Send_Chunk ToxDefaultImpl::toxFileSendChunk(uint32_t friend_number, uint32_t file_number, uint64_t position, const std::vector<uint8_t>& data) {
+	Tox_Err_File_Send_Chunk err = TOX_ERR_FILE_SEND_CHUNK_OK;
+	tox_file_send_chunk(_tox, friend_number, file_number, position, data.data(), data.size(), &err);
+	return err;
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> ToxDefaultImpl::toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) {

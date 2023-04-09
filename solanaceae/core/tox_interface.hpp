@@ -48,6 +48,11 @@ struct ToxI_raw {
 	virtual std::vector<uint8_t> toxHash(const std::vector<uint8_t>& data);
 
 	// files
+	virtual Tox_Err_File_Control toxFileControl(uint32_t friend_number, uint32_t file_number, Tox_File_Control control) = 0;
+	virtual Tox_Err_File_Seek toxFileSeek(uint32_t friend_number, uint32_t file_number, uint64_t position) = 0;
+	virtual std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_File_Get> toxFileGetFileID(uint32_t friend_number, uint32_t file_number) = 0;
+	virtual std::tuple<std::optional<uint32_t>, Tox_Err_File_Send> toxFileSend(uint32_t friend_number, uint32_t kind, uint64_t file_size, const std::vector<uint8_t>& file_id, std::string_view filename) = 0;
+	virtual Tox_Err_File_Send_Chunk toxFileSendChunk(uint32_t friend_number, uint32_t file_number, uint64_t position, const std::vector<uint8_t>& data) = 0;
 
 	// conferece
 	//bool tox_conference_delete(Tox *tox, uint32_t conference_number, Tox_Err_Conference_Delete *error);
@@ -158,6 +163,10 @@ struct ToxI : public ToxI_raw {
 
 	std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> toxFriendSendMessage_str(uint32_t friend_number, Tox_Message_Type type, const std::string& message) {
 		return toxFriendSendMessage(friend_number, type, message);
+	}
+
+	std::tuple<std::optional<uint32_t>, Tox_Err_File_Send> toxFileSend_str(uint32_t friend_number, uint32_t kind, uint64_t file_size, const std::vector<uint8_t>& file_id, const std::string& filename) {
+		return toxFileSend(friend_number, kind, file_size, file_id, filename);
 	}
 
 	Tox_Err_Conference_Send_Message toxConferenceSendMessage_str(uint32_t conference_number, Tox_Message_Type type, const std::string& message) {
