@@ -45,8 +45,12 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_File_Recv_Chunk*) {
 	return false;
 }
 
-bool ToxEventLogger::onToxEvent(const Tox_Event_File_Recv_Control*) {
-	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_FILE_RECV_CONTROL) << "\n";
+bool ToxEventLogger::onToxEvent(const Tox_Event_File_Recv_Control* e) {
+	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_FILE_RECV_CONTROL)
+		<< " frd:" << tox_event_file_recv_control_get_friend_number(e)
+		<< " fnb:" << tox_event_file_recv_control_get_file_number(e)
+		<< " ctl:" << tox_event_file_recv_control_get_control(e)
+		<< "\n";
 	return false;
 }
 
