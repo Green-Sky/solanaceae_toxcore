@@ -1,4 +1,5 @@
 #include "./tox_default_impl.hpp"
+#include "tox/tox.h"
 #include <optional>
 
 Tox_Connection ToxDefaultImpl::toxSelfGetConnectionStatus(void) {
@@ -93,15 +94,108 @@ Tox_Err_Friend_Delete ToxDefaultImpl::toxFriendDelete(uint32_t friend_number) {
 	return err;
 }
 
-std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Friend_Get_Public_Key> ToxDefaultImpl::toxFriendGetPublicKey(uint32_t friend_number) {
+std::tuple<std::optional<uint32_t>, Tox_Err_Friend_By_Public_Key> ToxDefaultImpl::toxFriendByPublicKey(const std::vector<uint8_t>& public_key) {
+	// TODO: check size
+	Tox_Err_Friend_By_Public_Key err = TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK;
+	auto res = tox_friend_by_public_key(_tox, public_key.data(), &err);
+	if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+bool ToxDefaultImpl::toxFriendExists(uint32_t friend_number) {
+	return tox_friend_exists(_tox, friend_number);
+}
+
+std::optional<std::vector<uint8_t>> ToxDefaultImpl::toxFriendGetPublicKey(uint32_t friend_number) {
 	std::vector<uint8_t> pub(TOX_PUBLIC_KEY_SIZE);
 	Tox_Err_Friend_Get_Public_Key err = TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK;
 	tox_friend_get_public_key(_tox, friend_number, pub.data(), &err);
 	if (err == TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {
-		return {pub, err};
+		return pub;
 	} else {
-		return {std::nullopt, err};
+		return std::nullopt;
 	}
+}
+
+std::optional<uint64_t> ToxDefaultImpl::toxFriendGetLastOnline(uint32_t friend_number) {
+	Tox_Err_Friend_Get_Last_Online err = TOX_ERR_FRIEND_GET_LAST_ONLINE_OK;
+	auto res = tox_friend_get_last_online(_tox, friend_number, &err);
+	if (res == TOX_ERR_FRIEND_GET_LAST_ONLINE_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<std::string> ToxDefaultImpl::toxFriendGetName(uint32_t friend_number) {
+	std::string name;
+	Tox_Err_Friend_Query err = TOX_ERR_FRIEND_QUERY_OK;
+	const auto size = tox_friend_get_name_size(_tox, friend_number, &err);
+	if (err != TOX_ERR_FRIEND_QUERY_OK) {
+		return std::nullopt;
+	}
+	name.resize(size);
+	tox_friend_get_name(_tox, friend_number, reinterpret_cast<uint8_t*>(name.data()), &err);
+	if (err == TOX_ERR_FRIEND_QUERY_OK) {
+		return name;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<std::string> ToxDefaultImpl::toxFriendGetStatusMessage(uint32_t friend_number) {
+	std::string status;
+	Tox_Err_Friend_Query err = TOX_ERR_FRIEND_QUERY_OK;
+	const auto size = tox_friend_get_status_message_size(_tox, friend_number, &err);
+	if (err != TOX_ERR_FRIEND_QUERY_OK) {
+		return std::nullopt;
+	}
+	status.resize(size);
+	tox_friend_get_status_message(_tox, friend_number, reinterpret_cast<uint8_t*>(status.data()), &err);
+	if (err == TOX_ERR_FRIEND_QUERY_OK) {
+		return status;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<Tox_User_Status> ToxDefaultImpl::toxFriendGetStatus(uint32_t friend_number) {
+	Tox_Err_Friend_Query err = TOX_ERR_FRIEND_QUERY_OK;
+	auto res = tox_friend_get_status(_tox, friend_number, &err);
+	if (err == TOX_ERR_FRIEND_QUERY_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<Tox_Connection> ToxDefaultImpl::toxFriendGetConnectionStatus(uint32_t friend_number) {
+	Tox_Err_Friend_Query err = TOX_ERR_FRIEND_QUERY_OK;
+	auto res = tox_friend_get_connection_status(_tox, friend_number, &err);
+	if (err == TOX_ERR_FRIEND_QUERY_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<bool> ToxDefaultImpl::toxFriendGetTyping(uint32_t friend_number) {
+	Tox_Err_Friend_Query err = TOX_ERR_FRIEND_QUERY_OK;
+	auto res = tox_friend_get_typing(_tox, friend_number, &err);
+	if (err == TOX_ERR_FRIEND_QUERY_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+Tox_Err_Set_Typing ToxDefaultImpl::toxSelfSetTyping(uint32_t friend_number, bool typing) {
+	Tox_Err_Set_Typing err = TOX_ERR_SET_TYPING_OK;
+	tox_self_set_typing(_tox, friend_number, typing, &err);
+	return err;
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> ToxDefaultImpl::toxFriendSendMessage(uint32_t friend_number, Tox_Message_Type type, std::string_view message) {

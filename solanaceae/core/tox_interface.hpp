@@ -15,6 +15,13 @@
 struct ToxI_raw {
 	virtual ~ToxI_raw(void) {}
 
+	// TODO: tox version
+	// size stuff
+	// options? (no)
+	// get save data?
+	// bootstrap
+	// add tcp relay
+
 	virtual Tox_Connection toxSelfGetConnectionStatus(void) = 0;
 	virtual uint32_t toxIterationInterval(void) = 0;
 
@@ -39,15 +46,22 @@ struct ToxI_raw {
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> toxFriendAdd(const std::vector<uint8_t>& address, std::string_view message) = 0;
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> toxFriendAddNorequest(const std::vector<uint8_t>& public_key) = 0;
 	virtual Tox_Err_Friend_Delete toxFriendDelete(uint32_t friend_number) = 0;
-	virtual std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Friend_Get_Public_Key> toxFriendGetPublicKey(uint32_t friend_number) = 0;
-
-
+	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Friend_By_Public_Key> toxFriendByPublicKey(const std::vector<uint8_t>& public_key) = 0;
+	virtual bool toxFriendExists(uint32_t friend_number) = 0;
+	// tox_self_get_friend_list
+	virtual std::optional<std::vector<uint8_t>> toxFriendGetPublicKey(uint32_t friend_number) = 0;
+	virtual std::optional<uint64_t> toxFriendGetLastOnline(uint32_t friend_number) = 0;
+	virtual std::optional<std::string> toxFriendGetName(uint32_t friend_number) = 0;
+	virtual std::optional<std::string> toxFriendGetStatusMessage(uint32_t friend_number) = 0;
+	virtual std::optional<Tox_User_Status> toxFriendGetStatus(uint32_t friend_number) = 0;
+	virtual std::optional<Tox_Connection> toxFriendGetConnectionStatus(uint32_t friend_number) = 0;
+	virtual std::optional<bool> toxFriendGetTyping(uint32_t friend_number) = 0;
+	virtual Tox_Err_Set_Typing toxSelfSetTyping(uint32_t friend_number, bool typing) = 0;
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> toxFriendSendMessage(uint32_t friend_number, Tox_Message_Type type, std::string_view message) = 0;
 
+	// files
 	// TODO: array? make it type agnostic?
 	virtual std::vector<uint8_t> toxHash(const std::vector<uint8_t>& data);
-
-	// files
 	virtual Tox_Err_File_Control toxFileControl(uint32_t friend_number, uint32_t file_number, Tox_File_Control control) = 0;
 	virtual Tox_Err_File_Seek toxFileSeek(uint32_t friend_number, uint32_t file_number, uint64_t position) = 0;
 	virtual std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_File_Get> toxFileGetFileID(uint32_t friend_number, uint32_t file_number) = 0;

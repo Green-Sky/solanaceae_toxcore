@@ -30,8 +30,16 @@ struct ToxDefaultImpl : public ToxI {
 	std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> toxFriendAdd(const std::vector<uint8_t>& address, std::string_view message) override;
 	std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> toxFriendAddNorequest(const std::vector<uint8_t>& public_key) override;
 	Tox_Err_Friend_Delete toxFriendDelete(uint32_t friend_number) override;
-	std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Friend_Get_Public_Key> toxFriendGetPublicKey(uint32_t friend_number) override;
-
+	std::tuple<std::optional<uint32_t>, Tox_Err_Friend_By_Public_Key> toxFriendByPublicKey(const std::vector<uint8_t>& public_key) override;
+	bool toxFriendExists(uint32_t friend_number) override;
+	std::optional<std::vector<uint8_t>> toxFriendGetPublicKey(uint32_t friend_number) override;
+	std::optional<uint64_t> toxFriendGetLastOnline(uint32_t friend_number) override;
+	std::optional<std::string> toxFriendGetName(uint32_t friend_number) override;
+	std::optional<std::string> toxFriendGetStatusMessage(uint32_t friend_number) override;
+	std::optional<Tox_User_Status> toxFriendGetStatus(uint32_t friend_number) override;
+	std::optional<Tox_Connection> toxFriendGetConnectionStatus(uint32_t friend_number) override;
+	std::optional<bool> toxFriendGetTyping(uint32_t friend_number) override;
+	Tox_Err_Set_Typing toxSelfSetTyping(uint32_t friend_number, bool typing) override;
 	std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Send_Message> toxFriendSendMessage(uint32_t friend_number, Tox_Message_Type type, std::string_view message) override;
 
 	// files
