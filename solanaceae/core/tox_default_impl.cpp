@@ -1,6 +1,7 @@
 #include "./tox_default_impl.hpp"
-#include "tox/tox.h"
+#include "toxcore/tox.h"
 #include <optional>
+#include <vector>
 
 Tox_Connection ToxDefaultImpl::toxSelfGetConnectionStatus(void) {
 	return tox_self_get_connection_status(_tox);
@@ -307,6 +308,12 @@ std::optional<bool> ToxDefaultImpl::toxGroupIsConnected(uint32_t group_number) {
 	}
 }
 
+Tox_Err_Group_Disconnect ToxDefaultImpl::toxGroupDisconnect(uint32_t group_number) {
+	Tox_Err_Group_Disconnect err = TOX_ERR_GROUP_DISCONNECT_OK;
+	tox_group_disconnect(_tox, group_number, &err);
+	return err;
+}
+
 Tox_Err_Group_Reconnect ToxDefaultImpl::toxGroupReconnect(uint32_t group_number) {
 	Tox_Err_Group_Reconnect err = TOX_ERR_GROUP_RECONNECT_OK;
 	tox_group_reconnect(_tox, group_number, &err);
@@ -316,6 +323,12 @@ Tox_Err_Group_Reconnect ToxDefaultImpl::toxGroupReconnect(uint32_t group_number)
 Tox_Err_Group_Leave ToxDefaultImpl::toxGroupLeave(uint32_t group_number, std::string_view part_message) {
 	Tox_Err_Group_Leave err = TOX_ERR_GROUP_LEAVE_OK;
 	tox_group_leave(_tox, group_number, reinterpret_cast<const uint8_t*>(part_message.data()), part_message.size(), &err);
+	return err;
+}
+
+Tox_Err_Group_Self_Name_Set ToxDefaultImpl::toxGroupSelfSetName(uint32_t group_number, std::string_view name) {
+	Tox_Err_Group_Self_Name_Set err = TOX_ERR_GROUP_SELF_NAME_SET_OK;
+	tox_group_self_set_name(_tox, group_number, reinterpret_cast<const uint8_t*>(name.data()), name.size(), &err);
 	return err;
 }
 
@@ -333,6 +346,53 @@ std::optional<std::string> ToxDefaultImpl::toxGroupSelfGetName(uint32_t group_nu
 
 	if (err == TOX_ERR_GROUP_SELF_QUERY_OK) {
 		return name;
+	} else {
+		return std::nullopt;
+	}
+}
+
+Tox_Err_Group_Self_Status_Set ToxDefaultImpl::toxGroupSelfSetStatus(uint32_t group_number, Tox_User_Status status) {
+	Tox_Err_Group_Self_Status_Set err = TOX_ERR_GROUP_SELF_STATUS_SET_OK;
+	tox_group_self_set_status(_tox, group_number, status, &err);
+	return err;
+}
+
+std::optional<Tox_User_Status> ToxDefaultImpl::toxGroupSelfGetStatus(uint32_t group_number) {
+	Tox_Err_Group_Self_Query err = TOX_ERR_GROUP_SELF_QUERY_OK;
+	auto res = tox_group_self_get_status(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_SELF_QUERY_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<Tox_Group_Role> ToxDefaultImpl::toxGroupSelfGetRole(uint32_t group_number) {
+	Tox_Err_Group_Self_Query err = TOX_ERR_GROUP_SELF_QUERY_OK;
+	auto res = tox_group_self_get_role(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_SELF_QUERY_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<uint32_t> ToxDefaultImpl::toxGroupSelfGetPeerId(uint32_t group_number) {
+	Tox_Err_Group_Self_Query err = TOX_ERR_GROUP_SELF_QUERY_OK;
+	auto res = tox_group_self_get_peer_id(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_SELF_QUERY_OK) {
+		return res;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<std::vector<uint8_t>> ToxDefaultImpl::toxGroupSelfGetPublicKey(uint32_t group_number) {
+	std::vector<uint8_t> public_key(TOX_GROUP_PEER_PUBLIC_KEY_SIZE);
+	Tox_Err_Group_Self_Query err = TOX_ERR_GROUP_SELF_QUERY_OK;
+	tox_group_self_get_public_key(_tox, group_number, public_key.data(), &err);
+	if (err == TOX_ERR_GROUP_SELF_QUERY_OK) {
+		return public_key;
 	} else {
 		return std::nullopt;
 	}
@@ -357,11 +417,42 @@ std::tuple<std::optional<std::string>, Tox_Err_Group_Peer_Query> ToxDefaultImpl:
 	}
 }
 
+std::tuple<std::optional<Tox_User_Status>, Tox_Err_Group_Peer_Query> ToxDefaultImpl::toxGroupPeerGetStatus(uint32_t group_number, uint32_t peer_id) {
+	Tox_Err_Group_Peer_Query err = TOX_ERR_GROUP_PEER_QUERY_OK;
+	auto res = tox_group_peer_get_status(_tox, group_number, peer_id, &err);
+	if (err == TOX_ERR_GROUP_PEER_QUERY_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<Tox_Group_Role>, Tox_Err_Group_Peer_Query> ToxDefaultImpl::toxGroupPeerGetRole(uint32_t group_number, uint32_t peer_id) {
+	Tox_Err_Group_Peer_Query err = TOX_ERR_GROUP_PEER_QUERY_OK;
+	auto res = tox_group_peer_get_role(_tox, group_number, peer_id, &err);
+	if (err == TOX_ERR_GROUP_PEER_QUERY_OK) {
+		return {res, err};
+	} else{
+		return {std::nullopt, err};
+	}
+}
+
 std::tuple<std::optional<Tox_Connection>, Tox_Err_Group_Peer_Query> ToxDefaultImpl::toxGroupPeerGetConnectionStatus(uint32_t group_number, uint32_t peer_id) {
 	Tox_Err_Group_Peer_Query err = TOX_ERR_GROUP_PEER_QUERY_OK;
 	auto res = tox_group_peer_get_connection_status(_tox, group_number, peer_id, &err);
 	if (err == TOX_ERR_GROUP_PEER_QUERY_OK) {
 		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Group_Peer_Query> ToxDefaultImpl::toxGroupPeerGetPublicKey(uint32_t group_number, uint32_t peer_id) {
+	std::vector<uint8_t> public_key(TOX_GROUP_PEER_PUBLIC_KEY_SIZE);
+	Tox_Err_Group_Peer_Query err = TOX_ERR_GROUP_PEER_QUERY_OK;
+	tox_group_peer_get_public_key(_tox, group_number, peer_id, public_key.data(), &err);
+	if (err == TOX_ERR_GROUP_PEER_QUERY_OK) {
+		return {public_key, err};
 	} else {
 		return {std::nullopt, err};
 	}

@@ -65,23 +65,23 @@ struct ToxDefaultImpl : public ToxI {
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_New> toxGroupNew(Tox_Group_Privacy_State privacy_state, std::string_view group_name, std::string_view name) override;
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Join> toxGroupJoin(const std::vector<uint8_t>& chat_id, std::string_view name, std::string_view password) override;
 	std::optional<bool> toxGroupIsConnected(uint32_t group_number) override;
-	//virtual Tox_Err_Group_Disconnect toxGroupDisconnect(uint32_t group_number) = 0;
+	Tox_Err_Group_Disconnect toxGroupDisconnect(uint32_t group_number) override;
 	Tox_Err_Group_Reconnect toxGroupReconnect(uint32_t group_number) override;
 	Tox_Err_Group_Leave toxGroupLeave(uint32_t group_number, std::string_view part_message) override;
 
-	//virtual Tox_Err_Group_Self_Name_Set toxGroupSelfSetName(uint32_t group_number, std::string_view name) = 0;
+	Tox_Err_Group_Self_Name_Set toxGroupSelfSetName(uint32_t group_number, std::string_view name) override;
 	std::optional<std::string> toxGroupSelfGetName(uint32_t group_number) override;
-	//virtual Tox_Err_Group_Self_Status_Set toxGroupSelfSetStatus(uint32_t group_number, Tox_User_Status status) = 0;
-	//virtual Tox_User_Status toxGroupSelfGetStatus(uint32_t group_number, Tox_Err_Group_Self_Query *error) = 0;
-	//virtual Tox_Group_Role toxGroupSelfGetRole(uint32_t group_number, Tox_Err_Group_Self_Query *error) = 0;
-	//virtual uint32_t toxGroupSelfGetPeerId(uint32_t group_number, Tox_Err_Group_Self_Query *error) = 0;
-	//virtual std::vector<uint8_t> toxGroupSelfGetPublicKey(uint32_t group_number, Tox_Err_Group_Self_Query *error) = 0;
+	Tox_Err_Group_Self_Status_Set toxGroupSelfSetStatus(uint32_t group_number, Tox_User_Status status) override;
+	std::optional<Tox_User_Status> toxGroupSelfGetStatus(uint32_t group_number) override;
+	std::optional<Tox_Group_Role> toxGroupSelfGetRole(uint32_t group_number) override;
+	std::optional<uint32_t> toxGroupSelfGetPeerId(uint32_t group_number) override;
+	std::optional<std::vector<uint8_t>> toxGroupSelfGetPublicKey(uint32_t group_number) override;
 
 	std::tuple<std::optional<std::string>, Tox_Err_Group_Peer_Query> toxGroupPeerGetName(uint32_t group_number, uint32_t peer_id) override;
-	//virtual Tox_User_Status toxGroupPeerGetStatus(uint32_t group_number, uint32_t peer_id, Tox_Err_Group_Peer_Query *error) = 0;
-	//virtual Tox_Group_Role toxGroupPeerGetRole(uint32_t group_number, uint32_t peer_id, Tox_Err_Group_Peer_Query *error) = 0;
+	std::tuple<std::optional<Tox_User_Status>, Tox_Err_Group_Peer_Query> toxGroupPeerGetStatus(uint32_t group_number, uint32_t peer_id) override;
+	std::tuple<std::optional<Tox_Group_Role>, Tox_Err_Group_Peer_Query> toxGroupPeerGetRole(uint32_t group_number, uint32_t peer_id) override;
 	std::tuple<std::optional<Tox_Connection>, Tox_Err_Group_Peer_Query> toxGroupPeerGetConnectionStatus(uint32_t group_number, uint32_t peer_id) override;
-	//virtual std::vector<uint8_t> toxGroupPeerGetPublicKey(uint32_t group_number, uint32_t peer_id, Tox_Err_Group_Peer_Query *error) = 0;
+	std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Group_Peer_Query> toxGroupPeerGetPublicKey(uint32_t group_number, uint32_t peer_id) override;
 
 	Tox_Err_Group_Topic_Set toxGroupSetTopic(uint32_t group_number, std::string_view topic) override;
 	std::optional<std::string> toxGroupGetTopic(uint32_t group_number) override;
