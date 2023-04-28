@@ -1,7 +1,4 @@
 #include "./tox_default_impl.hpp"
-#include "toxcore/tox.h"
-#include <optional>
-#include <vector>
 
 Tox_Connection ToxDefaultImpl::toxSelfGetConnectionStatus(void) {
 	return tox_self_get_connection_status(_tox);
