@@ -48,7 +48,8 @@ struct ToxI_raw {
 	virtual Tox_Err_Friend_Delete toxFriendDelete(uint32_t friend_number) = 0;
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Friend_By_Public_Key> toxFriendByPublicKey(const std::vector<uint8_t>& public_key) = 0;
 	virtual bool toxFriendExists(uint32_t friend_number) = 0;
-	// tox_self_get_friend_list
+	virtual size_t toxSelfGetFriendListSize(void) = 0;
+	virtual std::vector<uint32_t> toxSelfGetFriendList(void) = 0;
 	virtual std::optional<std::vector<uint8_t>> toxFriendGetPublicKey(uint32_t friend_number) = 0;
 	virtual std::optional<uint64_t> toxFriendGetLastOnline(uint32_t friend_number) = 0;
 	virtual std::optional<std::string> toxFriendGetName(uint32_t friend_number) = 0;
@@ -134,6 +135,8 @@ struct ToxI_raw {
 	// TODO: str
 
 	//virtual uint32_t toxGroupGetNumberGroups(void) = 0;
+	virtual size_t toxGroupGetNumberGroups(void) = 0;
+	virtual std::vector<uint32_t> toxGroupGetList(void) = 0;
 
 	//virtual Tox_Group_Privacy_State toxGroupGetPrivacyState(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
 	//virtual Tox_Group_Voice_State toxGroupGetVoiceState(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;

@@ -107,6 +107,17 @@ bool ToxDefaultImpl::toxFriendExists(uint32_t friend_number) {
 	return tox_friend_exists(_tox, friend_number);
 }
 
+size_t ToxDefaultImpl::toxSelfGetFriendListSize(void) {
+	return tox_self_get_friend_list_size(_tox);
+}
+
+std::vector<uint32_t> ToxDefaultImpl::toxSelfGetFriendList(void) {
+	std::vector<uint32_t> friend_list;
+	friend_list.resize(tox_self_get_friend_list_size(_tox));
+	tox_self_get_friend_list(_tox, friend_list.data());
+	return friend_list;
+}
+
 std::optional<std::vector<uint8_t>> ToxDefaultImpl::toxFriendGetPublicKey(uint32_t friend_number) {
 	std::vector<uint8_t> pub(TOX_PUBLIC_KEY_SIZE);
 	Tox_Err_Friend_Get_Public_Key err = TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK;
@@ -509,6 +520,26 @@ std::optional<std::vector<uint8_t>> ToxDefaultImpl::toxGroupGetChatId(uint32_t g
 	} else {
 		return std::nullopt;
 	}
+}
+
+size_t ToxDefaultImpl::toxGroupGetNumberGroups(void) {
+	return tox_group_get_number_groups(_tox);
+}
+
+std::vector<uint32_t> ToxDefaultImpl::toxGroupGetList(void) {
+	std::vector<uint32_t> group_list;
+
+	size_t group_count = tox_group_get_number_groups(_tox);
+	// HACK: we guess number until we have count
+	for (uint32_t i = 0; i < group_count + 10'000u && group_list.size() < group_count; i++) {
+		Tox_Err_Group_Self_Query err = TOX_ERR_GROUP_SELF_QUERY_OK;
+		tox_group_self_get_peer_id(_tox, i, &err);
+		if (err == TOX_ERR_GROUP_SELF_QUERY_OK) {
+			group_list.push_back(i);
+		}
+	}
+
+	return group_list;
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> ToxDefaultImpl::toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) {
