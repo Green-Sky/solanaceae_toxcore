@@ -61,6 +61,7 @@ struct ToxEventI {
 
 // defines the interface where to subscribe
 struct ToxEventProviderI {
+	virtual ~ToxEventProviderI(void) {}
 	// TODO: unsub
 	virtual void subscribe(ToxEventI* object, const Tox_Event event_type) = 0;
 };
