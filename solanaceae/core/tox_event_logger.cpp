@@ -30,8 +30,13 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_Conference_Title*) {
 	return false;
 }
 
-bool ToxEventLogger::onToxEvent(const Tox_Event_File_Chunk_Request*) {
-	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_FILE_CHUNK_REQUEST) << "\n";
+bool ToxEventLogger::onToxEvent(const Tox_Event_File_Chunk_Request* e) {
+	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_FILE_CHUNK_REQUEST)
+		<< " frd:" << tox_event_file_chunk_request_get_friend_number(e)
+		<< " fnb:" << tox_event_file_chunk_request_get_file_number(e)
+		<< " pos:" << tox_event_file_chunk_request_get_position(e)
+		<< " len:" << tox_event_file_chunk_request_get_length(e)
+		<< "\n";
 	return false;
 }
 

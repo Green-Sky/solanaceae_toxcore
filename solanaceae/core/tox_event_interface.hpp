@@ -8,6 +8,7 @@
 struct ToxEventI {
 	virtual ~ToxEventI(void) {}
 
+	// TODO: rename to onEvent()
 #define VIRT_EVENT(x) virtual bool onToxEvent(const x*) { return false; }
 
 	// return true if the event is handled and should not be given down the chain
