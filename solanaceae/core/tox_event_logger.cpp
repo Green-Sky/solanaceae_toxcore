@@ -40,8 +40,14 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_File_Chunk_Request* e) {
 	return false;
 }
 
-bool ToxEventLogger::onToxEvent(const Tox_Event_File_Recv*) {
-	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_FILE_RECV) << "\n";
+bool ToxEventLogger::onToxEvent(const Tox_Event_File_Recv* e) {
+	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_FILE_RECV)
+		<< " frd:" << tox_event_file_recv_get_friend_number(e)
+		<< " fnb:" << tox_event_file_recv_get_file_number(e)
+		<< " fnm:" << std::string_view{reinterpret_cast<const char*>(tox_event_file_recv_get_filename(e)), tox_event_file_recv_get_filename_length(e)}
+		<< " sze:" << tox_event_file_recv_get_file_size(e)
+		<< " knd:" << tox_event_file_recv_get_kind(e)
+		<< "\n";
 	return false;
 }
 

@@ -545,8 +545,8 @@ std::vector<uint32_t> ToxDefaultImpl::toxGroupGetList(void) {
 std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> ToxDefaultImpl::toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) {
 	Tox_Err_Group_Send_Message err = TOX_ERR_GROUP_SEND_MESSAGE_OK;
 	uint32_t message_id = 0;
-	tox_group_send_message(_tox, group_number, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &message_id, &err);
-	if (err == TOX_ERR_GROUP_SEND_MESSAGE_OK) {
+	const bool res = tox_group_send_message(_tox, group_number, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &message_id, &err);
+	if (res) {
 		return {message_id, err};
 	} else {
 		return {std::nullopt, err};
