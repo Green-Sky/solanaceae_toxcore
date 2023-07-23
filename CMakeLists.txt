@@ -6,6 +6,9 @@ add_library(solanaceae_toxcore
 	./solanaceae/toxcore/utils.hpp
 	./solanaceae/toxcore/utils.cpp
 
+	./solanaceae/toxcore/tox_key.hpp
+	./solanaceae/toxcore/tox_key.cpp
+
 	./solanaceae/toxcore/tox_interface.hpp
 	./solanaceae/toxcore/tox_interface.cpp
 	./solanaceae/toxcore/tox_event_interface.hpp
