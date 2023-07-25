@@ -12,8 +12,8 @@ struct ToxKey {
 	ToxKey(const std::vector<std::uint8_t>& v);
 	ToxKey(const std::uint8_t* d, std::size_t s);
 
-	constexpr bool operator==(const ToxKey& other) const { return data == other.data; }
-	constexpr bool operator!=(const ToxKey& other) const { return data != other.data; }
+	bool operator==(const ToxKey& other) const { return data == other.data; }
+	bool operator!=(const ToxKey& other) const { return data != other.data; }
 
 	bool operator<(const ToxKey& other) const;
 
