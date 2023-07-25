@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <cstdint>
+#include <cstddef>
 
 // public key or secret key, or conf uid
 struct ToxKey {
