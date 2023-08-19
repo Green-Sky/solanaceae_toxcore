@@ -261,8 +261,11 @@ void ToxEventLogger::subscribeAll(ToxEventProviderI& tep) {
 	tep.subscribe(this, TOX_EVENT_GROUP_PASSWORD);
 	tep.subscribe(this, TOX_EVENT_GROUP_MESSAGE);
 	tep.subscribe(this, TOX_EVENT_GROUP_PRIVATE_MESSAGE);
+#if !NDEBUG
+	// TOO spammy
 	tep.subscribe(this, TOX_EVENT_GROUP_CUSTOM_PACKET);
 	tep.subscribe(this, TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET);
+#endif
 	tep.subscribe(this, TOX_EVENT_GROUP_INVITE);
 	tep.subscribe(this, TOX_EVENT_GROUP_PEER_JOIN);
 	tep.subscribe(this, TOX_EVENT_GROUP_PEER_EXIT);
