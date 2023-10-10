@@ -64,6 +64,16 @@ struct ToxDefaultImpl : public ToxI {
 
 	// group
 
+	uint32_t toxGroupMaxTopicLength(void) override;
+	uint32_t toxGroupMaxPartLength(void) override;
+	uint32_t toxGroupMaxMessageLength(void) override;
+	uint32_t toxGroupMaxCustomLossyPacketLength(void) override;
+	uint32_t toxGroupMaxCustomLosslessPacketLength(void) override;
+	uint32_t toxGroupMaxGroupNameLength(void) override;
+	uint32_t toxGroupMaxPasswordSize(void) override;
+	uint32_t toxGroupChatIdSize(void) override;
+	uint32_t toxGroupPeerPublicKeySize(void) override;
+
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_New> toxGroupNew(Tox_Group_Privacy_State privacy_state, std::string_view group_name, std::string_view name) override;
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Join> toxGroupJoin(const std::vector<uint8_t>& chat_id, std::string_view name, std::string_view password) override;
 	std::optional<bool> toxGroupIsConnected(uint32_t group_number) override;

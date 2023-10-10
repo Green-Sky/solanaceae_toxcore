@@ -106,6 +106,16 @@ struct ToxI_raw {
 
 	// group
 
+	virtual uint32_t toxGroupMaxTopicLength(void) = 0;
+	virtual uint32_t toxGroupMaxPartLength(void) = 0;
+	virtual uint32_t toxGroupMaxMessageLength(void) = 0;
+	virtual uint32_t toxGroupMaxCustomLossyPacketLength(void) = 0;
+	virtual uint32_t toxGroupMaxCustomLosslessPacketLength(void) = 0;
+	virtual uint32_t toxGroupMaxGroupNameLength(void) = 0;
+	virtual uint32_t toxGroupMaxPasswordSize(void) = 0;
+	virtual uint32_t toxGroupChatIdSize(void) = 0;
+	virtual uint32_t toxGroupPeerPublicKeySize(void) = 0;
+
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Group_New> toxGroupNew(Tox_Group_Privacy_State privacy_state, std::string_view group_name, std::string_view name) = 0;
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Group_Join> toxGroupJoin(const std::vector<uint8_t>& chat_id, std::string_view name, std::string_view password) = 0;
 	virtual std::optional<bool> toxGroupIsConnected(uint32_t group_number) = 0; // only 1 error type, skip

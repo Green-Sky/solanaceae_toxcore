@@ -285,6 +285,42 @@ Tox_Err_Friend_Custom_Packet ToxDefaultImpl::toxFriendSendLosslessPacket(uint32_
 	return err;
 }
 
+uint32_t ToxDefaultImpl::toxGroupMaxTopicLength(void) {
+	return tox_group_max_topic_length();
+}
+
+uint32_t ToxDefaultImpl::toxGroupMaxPartLength(void) {
+	return tox_group_max_part_length();
+}
+
+uint32_t ToxDefaultImpl::toxGroupMaxMessageLength(void) {
+	return tox_group_max_message_length();
+}
+
+uint32_t ToxDefaultImpl::toxGroupMaxCustomLossyPacketLength(void) {
+	return tox_group_max_custom_lossy_packet_length();
+}
+
+uint32_t ToxDefaultImpl::toxGroupMaxCustomLosslessPacketLength(void) {
+	return tox_group_max_custom_lossless_packet_length();
+}
+
+uint32_t ToxDefaultImpl::toxGroupMaxGroupNameLength(void) {
+	return tox_group_max_group_name_length();
+}
+
+uint32_t ToxDefaultImpl::toxGroupMaxPasswordSize(void) {
+	return tox_group_max_password_size();
+}
+
+uint32_t ToxDefaultImpl::toxGroupChatIdSize(void) {
+	return tox_group_chat_id_size();
+}
+
+uint32_t ToxDefaultImpl::toxGroupPeerPublicKeySize(void) {
+	return tox_group_peer_public_key_size();
+}
+
 std::tuple<std::optional<uint32_t>, Tox_Err_Group_New> ToxDefaultImpl::toxGroupNew(Tox_Group_Privacy_State privacy_state, std::string_view group_name, std::string_view name) {
 	Tox_Err_Group_New err = TOX_ERR_GROUP_NEW_OK;
 	auto res = tox_group_new(_tox, privacy_state, reinterpret_cast<const uint8_t*>(group_name.data()), group_name.size(), reinterpret_cast<const uint8_t*>(name.data()), name.size(), &err);
