@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tox/tox.h>
 #include "./tox_interface.hpp"
 
 struct ToxDefaultImpl : public ToxI {

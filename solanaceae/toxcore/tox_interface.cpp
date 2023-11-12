@@ -1,3 +1,4 @@
+#include <tox/tox.h> // before interface
 #include "./tox_interface.hpp"
 
 #include "./utils.hpp"

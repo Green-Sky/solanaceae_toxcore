@@ -1,6 +1,7 @@
 #pragma once
 
-#include <tox/tox.h>
+//#include <tox/tox.h>
+#include "./toxcore_enums.hpp"
 
 #include <string_view>
 #include <vector>

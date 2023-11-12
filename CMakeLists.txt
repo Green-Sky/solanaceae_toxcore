@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(solanaceae)
 
 add_library(solanaceae_toxcore_interface INTERFACE
+	#./solanaceae/toxcore/toxcore_enums.hpp
 	#./solanaceae/toxcore/tox_interface.hpp
 )
 target_include_directories(solanaceae_toxcore_interface INTERFACE .)
@@ -15,6 +16,7 @@ add_library(solanaceae_toxcore
 	./solanaceae/toxcore/tox_key.hpp
 	./solanaceae/toxcore/tox_key.cpp
 
+	./solanaceae/toxcore/toxcore_enums.hpp
 	./solanaceae/toxcore/tox_interface.hpp
 	./solanaceae/toxcore/tox_interface.cpp
 	./solanaceae/toxcore/tox_event_interface.hpp
