@@ -5,6 +5,7 @@ project(solanaceae)
 add_library(solanaceae_toxcore_interface INTERFACE
 	#./solanaceae/toxcore/toxcore_enums.hpp
 	#./solanaceae/toxcore/tox_interface.hpp
+	#./solanaceae/toxcore/tox_private_interface.hpp
 )
 target_include_directories(solanaceae_toxcore_interface INTERFACE .)
 target_compile_features(solanaceae_toxcore_interface INTERFACE cxx_std_17)
@@ -20,6 +21,7 @@ add_library(solanaceae_toxcore
 	./solanaceae/toxcore/tox_interface.hpp
 	./solanaceae/toxcore/tox_interface.cpp
 	./solanaceae/toxcore/tox_event_interface.hpp
+	./solanaceae/toxcore/tox_private_interface.hpp
 
 	./solanaceae/toxcore/tox_default_impl.hpp
 	./solanaceae/toxcore/tox_default_impl.cpp
