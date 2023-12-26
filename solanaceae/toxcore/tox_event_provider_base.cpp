@@ -70,7 +70,7 @@ void ToxEventProviderBase::dispatchEvents(const Tox_Events* events) {
 #undef HANDLE_EVENT
 }
 
-void ToxEventProviderBase::subscribe(ToxEventI* object, const Tox_Event event_type) {
+void ToxEventProviderBase::subscribe(ToxEventI* object, const Tox_Event_Type event_type) {
 	_subscribers.at(event_type).push_back(object);
 }
 
