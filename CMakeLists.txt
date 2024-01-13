@@ -11,9 +11,6 @@ target_include_directories(solanaceae_toxcore_interface INTERFACE .)
 target_compile_features(solanaceae_toxcore_interface INTERFACE cxx_std_17)
 
 add_library(solanaceae_toxcore
-	./solanaceae/toxcore/utils.hpp
-	./solanaceae/toxcore/utils.cpp
-
 	./solanaceae/toxcore/tox_key.hpp
 	./solanaceae/toxcore/tox_key.cpp
 
@@ -37,5 +34,6 @@ target_compile_features(solanaceae_toxcore PUBLIC cxx_std_17)
 target_link_libraries(solanaceae_toxcore PUBLIC
 	toxcore
 	solanaceae_toxcore_interface
+	solanaceae_util
 )
 

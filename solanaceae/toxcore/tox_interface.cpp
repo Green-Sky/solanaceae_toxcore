@@ -1,7 +1,7 @@
 #include <tox/tox.h> // before interface
 #include "./tox_interface.hpp"
 
-#include "./utils.hpp"
+#include <solanaceae/util/utils.hpp>
 
 std::string ToxI_raw::toxSelfGetAddressStr(void) {
 	// TODO: cache
