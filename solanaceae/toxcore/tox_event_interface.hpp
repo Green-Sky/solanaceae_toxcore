@@ -62,6 +62,8 @@ struct ToxEventI {
 
 // defines the interface where to subscribe
 struct ToxEventProviderI {
+	static constexpr const char* version {"1"};
+
 	virtual ~ToxEventProviderI(void) {}
 	// TODO: unsub
 	virtual void subscribe(ToxEventI* object, const Tox_Event_Type event_type) = 0;

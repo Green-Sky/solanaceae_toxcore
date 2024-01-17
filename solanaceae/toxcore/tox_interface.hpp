@@ -14,6 +14,8 @@
 // defines the full interface for tox
 // HACK: raw
 struct ToxI_raw {
+	static constexpr const char* version {"6"};
+
 	virtual ~ToxI_raw(void) {}
 
 	// TODO: tox version
@@ -177,6 +179,8 @@ struct ToxI_raw {
 
 // HACK: work around zppbits inability to pass string_view as parameter ( https://github.com/eyalz800/zpp_bits/issues/107 )
 struct ToxI : public ToxI_raw {
+	static constexpr const char* version {ToxI_raw::version};
+
 	Tox_Err_Set_Info toxSelfSetName_str(const std::string& name) {
 		return toxSelfSetName(name);
 	}
