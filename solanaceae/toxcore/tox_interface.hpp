@@ -14,7 +14,7 @@
 // defines the full interface for tox
 // HACK: raw
 struct ToxI_raw {
-	static constexpr const char* version {"6"};
+	static constexpr const char* version {"7"};
 
 	virtual ~ToxI_raw(void) {}
 
@@ -159,7 +159,7 @@ struct ToxI_raw {
 
 	// returns message_id
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) = 0;
-	virtual Tox_Err_Group_Send_Private_Message toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) = 0;
+	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Private_Message> toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) = 0;
 
 	virtual Tox_Err_Group_Send_Custom_Packet toxGroupSendCustomPacket(uint32_t group_number, bool lossless, const std::vector<uint8_t>& data) = 0;
 	virtual Tox_Err_Group_Send_Custom_Private_Packet toxGroupSendCustomPrivatePacket(uint32_t group_number, uint32_t peer_id, bool lossless, const std::vector<uint8_t>& data) = 0;
@@ -229,7 +229,7 @@ struct ToxI : public ToxI_raw {
 		return toxGroupSendMessage(group_number, type, message);
 	}
 
-	Tox_Err_Group_Send_Private_Message toxGroupSendPrivateMessage_str(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, const std::string& message) {
+	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Private_Message> toxGroupSendPrivateMessage_str(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, const std::string& message) {
 		return toxGroupSendPrivateMessage(group_number, peer_id, type, message);
 	}
 

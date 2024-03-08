@@ -63,6 +63,7 @@ void ToxEventProviderBase::dispatchEvents(const Tox_Events* events) {
 	HANDLE_EVENT(GROUP_SELF_JOIN, group_self_join);
 	HANDLE_EVENT(GROUP_JOIN_FAIL, group_join_fail);
 	HANDLE_EVENT(GROUP_MODERATION, group_moderation);
+	HANDLE_EVENT(DHT_GET_NODES_RESPONSE, dht_get_nodes_response);
 #undef HANDLE_EVENT
 
 			default:

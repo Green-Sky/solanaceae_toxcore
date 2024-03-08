@@ -511,15 +511,15 @@ Tox_Err_Group_Topic_Set ToxDefaultImpl::toxGroupSetTopic(uint32_t group_number, 
 std::optional<std::string> ToxDefaultImpl::toxGroupGetTopic(uint32_t group_number) {
 	std::string topic;
 
-	Tox_Err_Group_State_Queries err = TOX_ERR_GROUP_STATE_QUERIES_OK;
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
 	const auto size = tox_group_get_topic_size(_tox, group_number, &err);
-	if (err != TOX_ERR_GROUP_STATE_QUERIES_OK) {
+	if (err != TOX_ERR_GROUP_STATE_QUERY_OK) {
 		return std::nullopt;
 	}
 
 	topic.resize(size);
 	tox_group_get_topic(_tox, group_number, reinterpret_cast<uint8_t*>(topic.data()), &err);
-	if (err == TOX_ERR_GROUP_STATE_QUERIES_OK) {
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
 		return topic;
 	} else {
 		return std::nullopt;
@@ -529,16 +529,16 @@ std::optional<std::string> ToxDefaultImpl::toxGroupGetTopic(uint32_t group_numbe
 std::optional<std::string> ToxDefaultImpl::toxGroupGetName(uint32_t group_number) {
 	std::string name;
 
-	Tox_Err_Group_State_Queries err = TOX_ERR_GROUP_STATE_QUERIES_OK;
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
 	const auto size = tox_group_get_name_size(_tox, group_number, &err);
-	if (err != TOX_ERR_GROUP_STATE_QUERIES_OK) {
+	if (err != TOX_ERR_GROUP_STATE_QUERY_OK) {
 		return std::nullopt;
 	}
 
 	name.resize(size);
 	tox_group_get_name(_tox, group_number, reinterpret_cast<uint8_t*>(name.data()), &err);
 
-	if (err == TOX_ERR_GROUP_STATE_QUERIES_OK) {
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
 		return name;
 	} else {
 		return std::nullopt;
@@ -549,9 +549,9 @@ std::optional<std::vector<uint8_t>> ToxDefaultImpl::toxGroupGetChatId(uint32_t g
 	std::vector<uint8_t> chat_id{};
 	chat_id.resize(TOX_GROUP_CHAT_ID_SIZE);
 
-	Tox_Err_Group_State_Queries err = TOX_ERR_GROUP_STATE_QUERIES_OK;
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
 	tox_group_get_chat_id(_tox, group_number, chat_id.data(), &err);
-	if (err == TOX_ERR_GROUP_STATE_QUERIES_OK) {
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
 		return chat_id;
 	} else {
 		return std::nullopt;
@@ -588,10 +588,14 @@ std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> ToxDefaultImpl::
 	}
 }
 
-Tox_Err_Group_Send_Private_Message ToxDefaultImpl::toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) {
+std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Private_Message> ToxDefaultImpl::toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) {
 	Tox_Err_Group_Send_Private_Message err = TOX_ERR_GROUP_SEND_PRIVATE_MESSAGE_OK;
-	tox_group_send_private_message(_tox, group_number, peer_id, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &err);
-	return err;
+	uint32_t message_id = tox_group_send_private_message(_tox, group_number, peer_id, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &err);
+	if (err == TOX_ERR_GROUP_SEND_PRIVATE_MESSAGE_OK) {
+		return {message_id, err};
+	} else {
+		return {std::nullopt, err};
+	}
 }
 
 Tox_Err_Group_Send_Custom_Packet ToxDefaultImpl::toxGroupSendCustomPacket(uint32_t group_number, bool lossless, const std::vector<uint8_t>& data) {

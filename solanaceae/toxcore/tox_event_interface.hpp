@@ -57,12 +57,14 @@ struct ToxEventI {
 	VIRT_EVENT(Tox_Event_Group_Join_Fail)
 	VIRT_EVENT(Tox_Event_Group_Moderation)
 
+	VIRT_EVENT(Tox_Event_Dht_Get_Nodes_Response);
+
 #undef VIRT_EVENT
 };
 
 // defines the interface where to subscribe
 struct ToxEventProviderI {
-	static constexpr const char* version {"1"};
+	static constexpr const char* version {"2"};
 
 	virtual ~ToxEventProviderI(void) {}
 	// TODO: unsub

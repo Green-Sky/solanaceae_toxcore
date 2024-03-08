@@ -113,7 +113,7 @@ struct ToxDefaultImpl : public ToxI {
 	//virtual std::string toxGroupGetPassword(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
 
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) override;
-	Tox_Err_Group_Send_Private_Message toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) override;
+	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Private_Message> toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) override;
 
 	Tox_Err_Group_Send_Custom_Packet toxGroupSendCustomPacket(uint32_t group_number, bool lossless, const std::vector<uint8_t>& data) override;
 	Tox_Err_Group_Send_Custom_Private_Packet toxGroupSendCustomPrivatePacket(uint32_t group_number, uint32_t peer_id, bool lossless, const std::vector<uint8_t>& data) override;
