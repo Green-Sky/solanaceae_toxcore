@@ -14,7 +14,7 @@
 // defines the full interface for tox
 // HACK: raw
 struct ToxI_raw {
-	static constexpr const char* version {"7"};
+	static constexpr const char* version {"8"};
 
 	virtual ~ToxI_raw(void) {}
 
@@ -103,9 +103,10 @@ struct ToxI_raw {
 	virtual Tox_Err_Friend_Custom_Packet toxFriendSendLossyPacket(uint32_t friend_number, const std::vector<uint8_t>& data) = 0;
 	virtual Tox_Err_Friend_Custom_Packet toxFriendSendLosslessPacket(uint32_t friend_number, const std::vector<uint8_t>& data) = 0;
 
-	// dht
-	// udp
-	// tcp
+	// dht and ports
+	virtual std::vector<uint8_t> toxSelfGetDHTID(void) = 0;
+	virtual std::tuple<std::optional<uint16_t>, Tox_Err_Get_Port> toxSelfGetUDPPort(void) = 0;
+	virtual std::tuple<std::optional<uint16_t>, Tox_Err_Get_Port> toxSelfGetTCPPort(void) = 0;
 
 	// group
 

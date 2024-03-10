@@ -159,6 +159,11 @@ enum Tox_Err_Friend_Custom_Packet {
     TOX_ERR_FRIEND_CUSTOM_PACKET_SENDQ,
 };
 
+enum Tox_Err_Get_Port {
+    TOX_ERR_GET_PORT_OK,
+    TOX_ERR_GET_PORT_NOT_BOUND,
+};
+
 enum Tox_Err_Group_New {
     TOX_ERR_GROUP_NEW_OK,
     TOX_ERR_GROUP_NEW_TOO_LONG,

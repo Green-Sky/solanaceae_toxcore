@@ -59,9 +59,10 @@ struct ToxDefaultImpl : public ToxI {
 	Tox_Err_Friend_Custom_Packet toxFriendSendLossyPacket(uint32_t friend_number, const std::vector<uint8_t>& data) override;
 	Tox_Err_Friend_Custom_Packet toxFriendSendLosslessPacket(uint32_t friend_number, const std::vector<uint8_t>& data) override;
 
-	// dht
-	// udp
-	// tcp
+	// dht and ports
+	std::vector<uint8_t> toxSelfGetDHTID(void) override;
+	std::tuple<std::optional<uint16_t>, Tox_Err_Get_Port> toxSelfGetUDPPort(void) override;
+	std::tuple<std::optional<uint16_t>, Tox_Err_Get_Port> toxSelfGetTCPPort(void) override;
 
 	// group
 

@@ -285,6 +285,32 @@ Tox_Err_Friend_Custom_Packet ToxDefaultImpl::toxFriendSendLosslessPacket(uint32_
 	return err;
 }
 
+std::vector<uint8_t> ToxDefaultImpl::toxSelfGetDHTID(void) {
+	std::vector<uint8_t> id(tox_public_key_size());
+	tox_self_get_dht_id(_tox, id.data());
+	return id;
+}
+
+std::tuple<std::optional<uint16_t>, Tox_Err_Get_Port> ToxDefaultImpl::toxSelfGetUDPPort(void) {
+	Tox_Err_Get_Port err = TOX_ERR_GET_PORT_OK;
+	const auto res = tox_self_get_udp_port(_tox, &err);
+	if (err == TOX_ERR_GET_PORT_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<uint16_t>, Tox_Err_Get_Port> ToxDefaultImpl::toxSelfGetTCPPort(void) {
+	Tox_Err_Get_Port err = TOX_ERR_GET_PORT_OK;
+	const auto res = tox_self_get_tcp_port(_tox, &err);
+	if (err == TOX_ERR_GET_PORT_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
 uint32_t ToxDefaultImpl::toxGroupMaxTopicLength(void) {
 	return tox_group_max_topic_length();
 }
