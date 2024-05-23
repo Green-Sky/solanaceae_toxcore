@@ -10,11 +10,14 @@
 #include <optional>
 
 // TODO: c++20 span
+// TODO: use span in utils
+
+// TODO: asyncable
 
 // defines the full interface for tox
 // HACK: raw
 struct ToxI_raw {
-	static constexpr const char* version {"8"};
+	static constexpr const char* version {"9"};
 
 	virtual ~ToxI_raw(void) {}
 
@@ -73,31 +76,29 @@ struct ToxI_raw {
 	virtual Tox_Err_File_Send_Chunk toxFileSendChunk(uint32_t friend_number, uint32_t file_number, uint64_t position, const std::vector<uint8_t>& data) = 0;
 
 	// conferece
-	//bool tox_conference_delete(Tox *tox, uint32_t conference_number, Tox_Err_Conference_Delete *error);
-	//uint32_t tox_conference_peer_count(const Tox *tox, uint32_t conference_number, Tox_Err_Conference_Peer_Query *error);
-	//size_t tox_conference_peer_get_name_size(const Tox *tox, uint32_t conference_number, uint32_t peer_number,
-	//bool tox_conference_peer_get_name(const Tox *tox, uint32_t conference_number, uint32_t peer_number, uint8_t *name,
-	//bool tox_conference_peer_get_public_key(const Tox *tox, uint32_t conference_number, uint32_t peer_number,
-	//bool tox_conference_peer_number_is_ours(const Tox *tox, uint32_t conference_number, uint32_t peer_number,
+	virtual Tox_Err_Conference_Delete toxConferenceDelete(uint32_t conference_number) = 0;
+	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Peer_Query> toxConferencePeerCount(uint32_t conference_number) = 0;
+	virtual std::tuple<std::optional<std::string>, Tox_Err_Conference_Peer_Query>  toxConferencePeerGetName(uint32_t conference_number, uint32_t peer_number) = 0;
+	virtual std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Conference_Peer_Query> toxConferencePeerGetPublicKey(uint32_t conference_number, uint32_t peer_number) = 0;
+	// TODO: simplify return value
+	virtual std::tuple<std::optional<bool>, Tox_Err_Conference_Peer_Query> toxConferencePeerNumberIsOurs(uint32_t conference_number, uint32_t peer_number) = 0;
+	// TODO: do offline conf stuff
 	//uint32_t tox_conference_offline_peer_count(const Tox *tox, uint32_t conference_number,
 	//size_t tox_conference_offline_peer_get_name_size(const Tox *tox, uint32_t conference_number,
 	//bool tox_conference_offline_peer_get_name(const Tox *tox, uint32_t conference_number, uint32_t offline_peer_number,
 	//bool tox_conference_offline_peer_get_public_key(const Tox *tox, uint32_t conference_number,
 	//uint64_t tox_conference_offline_peer_get_last_active(const Tox *tox, uint32_t conference_number,
-	//bool tox_conference_set_max_offline(Tox *tox, uint32_t conference_number, uint32_t max_offline_peers, Tox_Err_Conference_Set_Max_Offline *error);
-	//bool tox_conference_invite(Tox *tox, uint32_t friend_number, uint32_t conference_number, Tox_Err_Conference_Invite *error);
+	// TODO: 2 value enum, use bool instead?
+	virtual Tox_Err_Conference_Set_Max_Offline toxConferenceSetMaxOffline(uint32_t conference_number, uint32_t max_offline_peers) = 0;
+	virtual Tox_Err_Conference_Invite toxConferenceInvite(uint32_t friend_number, uint32_t conference_number) = 0;
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) = 0;
 	virtual Tox_Err_Conference_Send_Message toxConferenceSendMessage(uint32_t conference_number, Tox_Message_Type type, std::string_view message) = 0;
-	//size_t tox_conference_get_title_size(const Tox *tox, uint32_t conference_number, Tox_Err_Conference_Title *error);
-	//bool tox_conference_get_title(const Tox *tox, uint32_t conference_number, uint8_t *title, Tox_Err_Conference_Title *error);
-	//bool tox_conference_set_title(Tox *tox, uint32_t conference_number, const uint8_t *title, size_t length, Tox_Err_Conference_Title *error);
-	//size_t tox_conference_get_chatlist_size(const Tox *tox);
-	//void tox_conference_get_chatlist(const Tox *tox, uint32_t *chatlist);
-	//Tox_Conference_Type tox_conference_get_type(const Tox *tox, uint32_t conference_number, Tox_Err_Conference_Get_Type *error);
-	//bool tox_conference_get_id(const Tox *tox, uint32_t conference_number, uint8_t *id);
-	//uint32_t tox_conference_by_id(const Tox *tox, const uint8_t *id, Tox_Err_Conference_By_Id *error);
-	//bool tox_conference_get_uid(const Tox *tox, uint32_t conference_number, uint8_t *uid);
-	//uint32_t tox_conference_by_uid(const Tox *tox, const uint8_t *uid, Tox_Err_Conference_By_Uid *error);
+	virtual std::tuple<std::optional<std::string>, Tox_Err_Conference_Title>  toxConferenceGetTitle(uint32_t conference_number) = 0;
+	virtual Tox_Err_Conference_Title toxConferenceSetTitle(uint32_t conference_number, std::string_view title) = 0;
+	virtual std::vector<uint32_t> toxConferenceGetChatlist(void) = 0;
+	virtual std::tuple<std::optional<Tox_Conference_Type>, Tox_Err_Conference_Get_Type> toxConferenceGetType(uint32_t conference_number) = 0;
+	virtual std::optional<std::vector<uint8_t>> toxConferenceGetID(uint32_t conference_number) = 0;
+	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Conference_By_Id> toxConferenceByID(const std::vector<uint8_t>& id) = 0;
 
 
 	virtual Tox_Err_Friend_Custom_Packet toxFriendSendLossyPacket(uint32_t friend_number, const std::vector<uint8_t>& data) = 0;
@@ -204,6 +205,10 @@ struct ToxI : public ToxI_raw {
 
 	Tox_Err_Conference_Send_Message toxConferenceSendMessage_str(uint32_t conference_number, Tox_Message_Type type, const std::string& message) {
 		return toxConferenceSendMessage(conference_number, type, message);
+	}
+
+	Tox_Err_Conference_Title toxConferenceSetTitle_str(uint32_t conference_number, const std::string& title) {
+		return toxConferenceSetTitle(conference_number, title);
 	}
 
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_New> toxGroupNew_str(Tox_Group_Privacy_State privacy_state, const std::string& group_name, const std::string& name) {

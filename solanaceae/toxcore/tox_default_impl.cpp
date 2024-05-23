@@ -257,6 +257,72 @@ Tox_Err_File_Send_Chunk ToxDefaultImpl::toxFileSendChunk(uint32_t friend_number,
 	return err;
 }
 
+Tox_Err_Conference_Delete ToxDefaultImpl::toxConferenceDelete(uint32_t conference_number) {
+	Tox_Err_Conference_Delete err = TOX_ERR_CONFERENCE_DELETE_OK;
+	tox_conference_delete(_tox, conference_number, &err);
+	return err;
+}
+
+std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Peer_Query> ToxDefaultImpl::toxConferencePeerCount(uint32_t conference_number) {
+	Tox_Err_Conference_Peer_Query err = TOX_ERR_CONFERENCE_PEER_QUERY_OK;
+	const auto res = tox_conference_peer_count(_tox, conference_number, &err);
+	if (err == TOX_ERR_CONFERENCE_PEER_QUERY_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<std::string>, Tox_Err_Conference_Peer_Query>  ToxDefaultImpl::toxConferencePeerGetName(uint32_t conference_number, uint32_t peer_number) {
+	std::string name;
+	Tox_Err_Conference_Peer_Query err = TOX_ERR_CONFERENCE_PEER_QUERY_OK;
+
+	const auto size = tox_conference_peer_get_name_size(_tox, conference_number, peer_number, &err);
+	if (err != TOX_ERR_CONFERENCE_PEER_QUERY_OK) {
+		return {std::nullopt, err};
+	}
+	name.resize(size);
+	tox_conference_peer_get_name(_tox, conference_number, peer_number, reinterpret_cast<uint8_t*>(name.data()), &err);
+	if (err == TOX_ERR_CONFERENCE_PEER_QUERY_OK) {
+		return {name, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Conference_Peer_Query> ToxDefaultImpl::toxConferencePeerGetPublicKey(uint32_t conference_number, uint32_t peer_number) {
+	std::vector<uint8_t> public_key(TOX_PUBLIC_KEY_SIZE);
+	Tox_Err_Conference_Peer_Query err = TOX_ERR_CONFERENCE_PEER_QUERY_OK;
+	tox_conference_peer_get_public_key(_tox, conference_number, peer_number, public_key.data(), &err);
+	if (err == TOX_ERR_CONFERENCE_PEER_QUERY_OK) {
+		return {public_key, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::tuple<std::optional<bool>, Tox_Err_Conference_Peer_Query> ToxDefaultImpl::toxConferencePeerNumberIsOurs(uint32_t conference_number, uint32_t peer_number) {
+	Tox_Err_Conference_Peer_Query err = TOX_ERR_CONFERENCE_PEER_QUERY_OK;
+	const auto res = tox_conference_peer_number_is_ours(_tox, conference_number, peer_number, &err);
+	if (err == TOX_ERR_CONFERENCE_PEER_QUERY_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+Tox_Err_Conference_Set_Max_Offline ToxDefaultImpl::toxConferenceSetMaxOffline(uint32_t conference_number, uint32_t max_offline_peers) {
+	Tox_Err_Conference_Set_Max_Offline err = TOX_ERR_CONFERENCE_SET_MAX_OFFLINE_OK;
+	tox_conference_set_max_offline(_tox, conference_number, max_offline_peers, &err);
+	return err;
+}
+
+Tox_Err_Conference_Invite ToxDefaultImpl::toxConferenceInvite(uint32_t friend_number, uint32_t conference_number) {
+	Tox_Err_Conference_Invite err = TOX_ERR_CONFERENCE_INVITE_OK;
+	tox_conference_invite(_tox, friend_number, conference_number, &err);
+	return err;
+}
+
 std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> ToxDefaultImpl::toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) {
 	Tox_Err_Conference_Join err = TOX_ERR_CONFERENCE_JOIN_OK;
 	auto res = tox_conference_join(_tox, friend_number, cookie.data(), cookie.size(), &err);
@@ -271,6 +337,71 @@ Tox_Err_Conference_Send_Message ToxDefaultImpl::toxConferenceSendMessage(uint32_
 	Tox_Err_Conference_Send_Message err = TOX_ERR_CONFERENCE_SEND_MESSAGE_OK;
 	tox_conference_send_message(_tox, conference_number, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &err);
 	return err;
+}
+
+std::tuple<std::optional<std::string>, Tox_Err_Conference_Title> ToxDefaultImpl::toxConferenceGetTitle(uint32_t conference_number) {
+	std::string title;
+	Tox_Err_Conference_Title err = TOX_ERR_CONFERENCE_TITLE_OK;
+
+	const auto size = tox_conference_get_title_size(_tox, conference_number, &err);
+	if (err != TOX_ERR_CONFERENCE_TITLE_OK) {
+		return {std::nullopt, err};
+	}
+	title.resize(size);
+	tox_conference_get_title(_tox, conference_number, reinterpret_cast<uint8_t*>(title.data()), &err);
+	if (err == TOX_ERR_CONFERENCE_TITLE_OK) {
+		return {title, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+Tox_Err_Conference_Title ToxDefaultImpl::toxConferenceSetTitle(uint32_t conference_number, std::string_view title) {
+	Tox_Err_Conference_Title err = TOX_ERR_CONFERENCE_TITLE_OK;
+	tox_conference_set_title(_tox, conference_number, reinterpret_cast<const uint8_t*>(title.data()), title.size(), &err);
+	return err;
+}
+
+std::vector<uint32_t> ToxDefaultImpl::toxConferenceGetChatlist(void) {
+	std::vector<uint32_t> list;
+	const auto size = tox_conference_get_chatlist_size(_tox);
+	list.resize(size);
+	tox_conference_get_chatlist(_tox, list.data());
+	return list;
+}
+
+std::tuple<std::optional<Tox_Conference_Type>, Tox_Err_Conference_Get_Type> ToxDefaultImpl::toxConferenceGetType(uint32_t conference_number) {
+	Tox_Err_Conference_Get_Type err = TOX_ERR_CONFERENCE_GET_TYPE_OK;
+	const auto ret = tox_conference_get_type(_tox, conference_number, &err);
+	if (err == TOX_ERR_CONFERENCE_GET_TYPE_OK) {
+		return {ret, err};
+	} else {
+		return {std::nullopt, err};
+	}
+}
+
+std::optional<std::vector<uint8_t>> ToxDefaultImpl::toxConferenceGetID(uint32_t conference_number) {
+	std::vector<uint8_t> id(TOX_CONFERENCE_ID_SIZE);
+	const auto ret = tox_conference_get_id(_tox, conference_number, id.data());
+	if (ret) {
+		return id;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::tuple<std::optional<uint32_t>, Tox_Err_Conference_By_Id> ToxDefaultImpl::toxConferenceByID(const std::vector<uint8_t>& id) {
+	if (id.size() != TOX_CONFERENCE_ID_SIZE) {
+		return {std::nullopt, TOX_ERR_CONFERENCE_BY_ID_NOT_FOUND};
+	}
+
+	Tox_Err_Conference_By_Id err = TOX_ERR_CONFERENCE_BY_ID_OK;
+	const auto res = tox_conference_by_id(_tox, id.data(), &err);
+	if (err == TOX_ERR_CONFERENCE_BY_ID_OK) {
+		return {res, err};
+	} else {
+		return {std::nullopt, err};
+	}
 }
 
 Tox_Err_Friend_Custom_Packet ToxDefaultImpl::toxFriendSendLossyPacket(uint32_t friend_number, const std::vector<uint8_t>& data) {

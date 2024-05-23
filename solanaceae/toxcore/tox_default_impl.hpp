@@ -53,8 +53,23 @@ struct ToxDefaultImpl : public ToxI {
 	Tox_Err_File_Send_Chunk toxFileSendChunk(uint32_t friend_number, uint32_t file_number, uint64_t position, const std::vector<uint8_t>& data) override;
 
 	// conferece
+	Tox_Err_Conference_Delete toxConferenceDelete(uint32_t conference_number) override;
+	std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Peer_Query> toxConferencePeerCount(uint32_t conference_number) override;
+	std::tuple<std::optional<std::string>, Tox_Err_Conference_Peer_Query>  toxConferencePeerGetName(uint32_t conference_number, uint32_t peer_number) override;
+	std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_Conference_Peer_Query> toxConferencePeerGetPublicKey(uint32_t conference_number, uint32_t peer_number) override;
+	std::tuple<std::optional<bool>, Tox_Err_Conference_Peer_Query> toxConferencePeerNumberIsOurs(uint32_t conference_number, uint32_t peer_number) override;
+	Tox_Err_Conference_Set_Max_Offline toxConferenceSetMaxOffline(uint32_t conference_number, uint32_t max_offline_peers) override;
+	Tox_Err_Conference_Invite toxConferenceInvite(uint32_t friend_number, uint32_t conference_number) override;
+
 	std::tuple<std::optional<uint32_t>, Tox_Err_Conference_Join> toxConferenceJoin(uint32_t friend_number, const std::vector<uint8_t>& cookie) override;
 	Tox_Err_Conference_Send_Message toxConferenceSendMessage(uint32_t conference_number, Tox_Message_Type type, std::string_view message) override;
+
+	std::tuple<std::optional<std::string>, Tox_Err_Conference_Title>  toxConferenceGetTitle(uint32_t conference_number) override;
+	Tox_Err_Conference_Title toxConferenceSetTitle(uint32_t conference_number, std::string_view title) override;
+	std::vector<uint32_t> toxConferenceGetChatlist(void) override;
+	std::tuple<std::optional<Tox_Conference_Type>, Tox_Err_Conference_Get_Type> toxConferenceGetType(uint32_t conference_number) override;
+	std::optional<std::vector<uint8_t>> toxConferenceGetID(uint32_t conference_number) override;
+	std::tuple<std::optional<uint32_t>, Tox_Err_Conference_By_Id> toxConferenceByID(const std::vector<uint8_t>& id) override;
 
 	Tox_Err_Friend_Custom_Packet toxFriendSendLossyPacket(uint32_t friend_number, const std::vector<uint8_t>& data) override;
 	Tox_Err_Friend_Custom_Packet toxFriendSendLosslessPacket(uint32_t friend_number, const std::vector<uint8_t>& data) override;
