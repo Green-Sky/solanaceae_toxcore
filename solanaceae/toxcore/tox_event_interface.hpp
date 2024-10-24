@@ -3,6 +3,7 @@
 #include <tox/tox_events.h>
 
 #include <string_view>
+#include <vector>
 
 // defines the full event interface for tox event subscription
 struct ToxEventI {
@@ -63,12 +64,41 @@ struct ToxEventI {
 };
 
 // defines the interface where to subscribe
+// tox event enum is defined differently than what we expect for utils
 struct ToxEventProviderI {
 	static constexpr const char* version {"2"};
 
+	using enumType = Tox_Event_Type;
+
+	// TODO: keep in sync with utils
+	struct SubscriptionReference {
+		ToxEventProviderI& _ep;
+		ToxEventI* _object {nullptr};
+		std::vector<enumType> _subs;
+
+		SubscriptionReference(ToxEventProviderI& ep, ToxEventI* object) :
+			_ep(ep), _object(object)
+		{
+		}
+
+		~SubscriptionReference(void) {
+			for (const enumType et : _subs) {
+				_ep.unsubscribe(_object, et);
+			}
+		}
+
+		SubscriptionReference& subscribe(const enumType event_type) {
+			_ep.subscribe(_object, event_type);
+			_subs.push_back(event_type);
+			return *this;
+		}
+	};
+
+
 	virtual ~ToxEventProviderI(void) {}
-	// TODO: unsub
+
 	virtual void subscribe(ToxEventI* object, const Tox_Event_Type event_type) = 0;
+	virtual void unsubscribe(ToxEventI* object, const Tox_Event_Type event_type) = 0;
 };
 
 constexpr Tox_Event_Type tox_event_from_string(const std::string_view str) {

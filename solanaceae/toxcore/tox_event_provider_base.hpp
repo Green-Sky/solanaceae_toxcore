@@ -12,6 +12,7 @@ struct ToxEventProviderBase : public ToxEventProviderI {
 
 	public: // event provider
 		virtual void subscribe(ToxEventI* object, const Tox_Event_Type event_type) override;
+		virtual void unsubscribe(ToxEventI* object, const Tox_Event_Type event_type) override;
 
 	protected:
 		std::array<std::vector<ToxEventI*>, 256> _subscribers; // rn 39 event types

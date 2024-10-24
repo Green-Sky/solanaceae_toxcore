@@ -77,3 +77,13 @@ void ToxEventProviderBase::subscribe(ToxEventI* object, const Tox_Event_Type eve
 	_subscribers.at(event_type).push_back(object);
 }
 
+void ToxEventProviderBase::unsubscribe(ToxEventI* object, const Tox_Event_Type event_type) {
+	auto& o_vec = _subscribers.at(static_cast<size_t>(event_type));
+	for (auto o_it = o_vec.cbegin(); o_it != o_vec.cend(); o_it++) {
+		if (*o_it == object) {
+			o_vec.erase(o_it);
+			break;
+		}
+	}
+}
+

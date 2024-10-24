@@ -176,7 +176,8 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_Group_Custom_Packet*) {
 }
 
 bool ToxEventLogger::onToxEvent(const Tox_Event_Group_Custom_Private_Packet*) {
-	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET) << "\n";
+	// too spammy for now
+	//_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET) << "\n";
 	return false;
 }
 
