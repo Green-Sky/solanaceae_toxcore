@@ -99,6 +99,10 @@ struct ToxEventProviderI {
 
 	virtual void subscribe(ToxEventI* object, const Tox_Event_Type event_type) = 0;
 	virtual void unsubscribe(ToxEventI* object, const Tox_Event_Type event_type) = 0;
+
+	SubscriptionReference newSubRef(ToxEventI* object) {
+		return SubscriptionReference{*this, object};
+	}
 };
 
 constexpr Tox_Event_Type tox_event_from_string(const std::string_view str) {
