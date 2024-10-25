@@ -176,8 +176,7 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_Group_Custom_Packet*) {
 }
 
 bool ToxEventLogger::onToxEvent(const Tox_Event_Group_Custom_Private_Packet*) {
-	// too spammy for now
-	//_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET) << "\n";
+	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET) << "\n";
 	return false;
 }
 
@@ -231,59 +230,61 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_Dht_Get_Nodes_Response* e) {
 	return false;
 }
 
-void ToxEventLogger::subscribeAll(ToxEventProviderI& tep) {
+void ToxEventLogger::subscribeAll(void) {
 	// TODO: loop + max event
-	tep.subscribe(this, TOX_EVENT_SELF_CONNECTION_STATUS);
+	_tep_sr
+		.subscribe(TOX_EVENT_SELF_CONNECTION_STATUS)
 
-	tep.subscribe(this, TOX_EVENT_FRIEND_REQUEST);
-	tep.subscribe(this, TOX_EVENT_FRIEND_CONNECTION_STATUS);
-	tep.subscribe(this, TOX_EVENT_FRIEND_LOSSY_PACKET);
-	tep.subscribe(this, TOX_EVENT_FRIEND_LOSSLESS_PACKET);
+		.subscribe(TOX_EVENT_FRIEND_REQUEST)
+		.subscribe(TOX_EVENT_FRIEND_CONNECTION_STATUS)
+		.subscribe(TOX_EVENT_FRIEND_LOSSY_PACKET)
+		.subscribe(TOX_EVENT_FRIEND_LOSSLESS_PACKET)
 
-	tep.subscribe(this, TOX_EVENT_FRIEND_NAME);
-	tep.subscribe(this, TOX_EVENT_FRIEND_STATUS);
-	tep.subscribe(this, TOX_EVENT_FRIEND_STATUS_MESSAGE);
+		.subscribe(TOX_EVENT_FRIEND_NAME)
+		.subscribe(TOX_EVENT_FRIEND_STATUS)
+		.subscribe(TOX_EVENT_FRIEND_STATUS_MESSAGE)
 
-	tep.subscribe(this, TOX_EVENT_FRIEND_MESSAGE);
-	tep.subscribe(this, TOX_EVENT_FRIEND_READ_RECEIPT);
-	tep.subscribe(this, TOX_EVENT_FRIEND_TYPING);
+		.subscribe(TOX_EVENT_FRIEND_MESSAGE)
+		.subscribe(TOX_EVENT_FRIEND_READ_RECEIPT)
+		.subscribe(TOX_EVENT_FRIEND_TYPING)
 
-	tep.subscribe(this, TOX_EVENT_FILE_CHUNK_REQUEST);
-	tep.subscribe(this, TOX_EVENT_FILE_RECV);
-	tep.subscribe(this, TOX_EVENT_FILE_RECV_CHUNK);
-	tep.subscribe(this, TOX_EVENT_FILE_RECV_CONTROL);
+		.subscribe(TOX_EVENT_FILE_CHUNK_REQUEST)
+		.subscribe(TOX_EVENT_FILE_RECV)
+		.subscribe(TOX_EVENT_FILE_RECV_CHUNK)
+		.subscribe(TOX_EVENT_FILE_RECV_CONTROL)
 
-	tep.subscribe(this, TOX_EVENT_CONFERENCE_INVITE);
-	tep.subscribe(this, TOX_EVENT_CONFERENCE_CONNECTED);
-	tep.subscribe(this, TOX_EVENT_CONFERENCE_PEER_LIST_CHANGED);
-	tep.subscribe(this, TOX_EVENT_CONFERENCE_PEER_NAME);
-	tep.subscribe(this, TOX_EVENT_CONFERENCE_TITLE);
+		.subscribe(TOX_EVENT_CONFERENCE_INVITE)
+		.subscribe(TOX_EVENT_CONFERENCE_CONNECTED)
+		.subscribe(TOX_EVENT_CONFERENCE_PEER_LIST_CHANGED)
+		.subscribe(TOX_EVENT_CONFERENCE_PEER_NAME)
+		.subscribe(TOX_EVENT_CONFERENCE_TITLE)
 
-	tep.subscribe(this, TOX_EVENT_CONFERENCE_MESSAGE);
+		.subscribe(TOX_EVENT_CONFERENCE_MESSAGE)
 
-	tep.subscribe(this, TOX_EVENT_GROUP_PEER_NAME);
-	tep.subscribe(this, TOX_EVENT_GROUP_PEER_STATUS);
-	tep.subscribe(this, TOX_EVENT_GROUP_TOPIC);
-	tep.subscribe(this, TOX_EVENT_GROUP_PRIVACY_STATE);
-	tep.subscribe(this, TOX_EVENT_GROUP_VOICE_STATE);
-	tep.subscribe(this, TOX_EVENT_GROUP_TOPIC_LOCK);
-	tep.subscribe(this, TOX_EVENT_GROUP_PEER_LIMIT);
-	tep.subscribe(this, TOX_EVENT_GROUP_PASSWORD);
-	tep.subscribe(this, TOX_EVENT_GROUP_MESSAGE);
-	tep.subscribe(this, TOX_EVENT_GROUP_PRIVATE_MESSAGE);
+		.subscribe(TOX_EVENT_GROUP_PEER_NAME)
+		.subscribe(TOX_EVENT_GROUP_PEER_STATUS)
+		.subscribe(TOX_EVENT_GROUP_TOPIC)
+		.subscribe(TOX_EVENT_GROUP_PRIVACY_STATE)
+		.subscribe(TOX_EVENT_GROUP_VOICE_STATE)
+		.subscribe(TOX_EVENT_GROUP_TOPIC_LOCK)
+		.subscribe(TOX_EVENT_GROUP_PEER_LIMIT)
+		.subscribe(TOX_EVENT_GROUP_PASSWORD)
+		.subscribe(TOX_EVENT_GROUP_MESSAGE)
+		.subscribe(TOX_EVENT_GROUP_PRIVATE_MESSAGE)
 #if !NDEBUG
-	// TOO spammy
-	tep.subscribe(this, TOX_EVENT_GROUP_CUSTOM_PACKET);
-	tep.subscribe(this, TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET);
+		// TOO spammy
+		.subscribe(TOX_EVENT_GROUP_CUSTOM_PACKET)
+		//.subscribe(TOX_EVENT_GROUP_CUSTOM_PRIVATE_PACKET)
 #endif
-	tep.subscribe(this, TOX_EVENT_GROUP_INVITE);
-	tep.subscribe(this, TOX_EVENT_GROUP_PEER_JOIN);
-	tep.subscribe(this, TOX_EVENT_GROUP_PEER_EXIT);
-	tep.subscribe(this, TOX_EVENT_GROUP_SELF_JOIN);
-	tep.subscribe(this, TOX_EVENT_GROUP_JOIN_FAIL);
-	tep.subscribe(this, TOX_EVENT_GROUP_MODERATION);
+		.subscribe(TOX_EVENT_GROUP_INVITE)
+		.subscribe(TOX_EVENT_GROUP_PEER_JOIN)
+		.subscribe(TOX_EVENT_GROUP_PEER_EXIT)
+		.subscribe(TOX_EVENT_GROUP_SELF_JOIN)
+		.subscribe(TOX_EVENT_GROUP_JOIN_FAIL)
+		.subscribe(TOX_EVENT_GROUP_MODERATION)
 
-	// too spammy
-	//tep.subscribe(this, TOX_EVENT_DHT_GET_NODES_RESPONSE);
+		// too spammy
+		//.subscribe(TOX_EVENT_DHT_GET_NODES_RESPONSE);
+	;
 }
 

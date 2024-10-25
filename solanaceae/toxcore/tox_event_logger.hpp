@@ -5,9 +5,10 @@
 #include <ostream>
 
 struct ToxEventLogger : public ToxEventI {
+	ToxEventProviderI::SubscriptionReference _tep_sr;
 	std::ostream& _out;
 
-	ToxEventLogger(std::ostream& out) : _out(out) {}
+	ToxEventLogger(ToxEventProviderI& tep, std::ostream& out) : _tep_sr(tep.newSubRef(this)), _out(out) {}
 	~ToxEventLogger(void) {}
 
 #define OVER_EVENT(x) bool onToxEvent(const x*) override;
@@ -60,6 +61,7 @@ struct ToxEventLogger : public ToxEventI {
 
 #undef OVER_EVENT
 
-	void subscribeAll(ToxEventProviderI& tep);
+	// TODO: subscribe to sections
+	void subscribeAll(void);
 };
 
