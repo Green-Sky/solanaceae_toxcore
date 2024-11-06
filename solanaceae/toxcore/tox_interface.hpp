@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <tox/tox.h>
 #include "./toxcore_enums.hpp"
 
 #include <string_view>
@@ -8,16 +7,18 @@
 #include <string>
 #include <tuple>
 #include <optional>
+#include <cstdint>
 
 // TODO: c++20 span
 // TODO: use span in utils
+// yea use spans, replace all vec params with ByteSpan
 
 // TODO: asyncable
 
 // defines the full interface for tox
 // HACK: raw
 struct ToxI_raw {
-	static constexpr const char* version {"9"};
+	static constexpr const char* version {"10"};
 
 	virtual ~ToxI_raw(void) {}
 
@@ -25,8 +26,9 @@ struct ToxI_raw {
 	// size stuff
 	// options? (no)
 	// get save data?
-	// bootstrap
-	// add tcp relay
+
+	virtual Tox_Err_Bootstrap toxBootstrap(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key /*[TOX_PUBLIC_KEY_SIZE]*/) = 0;
+	virtual Tox_Err_Bootstrap toxAddTcpRelay(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key /*[TOX_PUBLIC_KEY_SIZE]*/) = 0;
 
 	virtual Tox_Connection toxSelfGetConnectionStatus(void) = 0;
 	virtual uint32_t toxIterationInterval(void) = 0;
@@ -38,7 +40,7 @@ struct ToxI_raw {
 	virtual uint32_t toxSelfGetNospam(void) = 0;
 
 	virtual std::vector<uint8_t> toxSelfGetPublicKey(void) = 0;
-	//virtual void toxSelfGetSecretKey(const Tox *tox, uint8_t *secret_key);
+	virtual std::vector<uint8_t> toxSelfGetSecretKey(void) = 0;
 
 	virtual Tox_Err_Set_Info toxSelfSetName(std::string_view name) = 0;
 	virtual std::string toxSelfGetName(void) = 0;
@@ -153,11 +155,12 @@ struct ToxI_raw {
 	virtual size_t toxGroupGetNumberGroups(void) = 0;
 	virtual std::vector<uint32_t> toxGroupGetList(void) = 0;
 
-	//virtual Tox_Group_Privacy_State toxGroupGetPrivacyState(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual Tox_Group_Voice_State toxGroupGetVoiceState(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual Tox_Group_Topic_Lock toxGroupGetTopicLock(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual uint16_t toxGroupGetPeerLimit(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual std::string toxGroupGetPassword(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
+	// only 1 error type, skip
+	virtual std::optional<Tox_Group_Privacy_State> toxGroupGetPrivacyState(uint32_t group_number) = 0;
+	virtual std::optional<Tox_Group_Voice_State> toxGroupGetVoiceState(uint32_t group_number) = 0;
+	virtual std::optional<bool> toxGroupGetTopicLock(uint32_t group_number) = 0;
+	virtual std::optional<uint16_t> toxGroupGetPeerLimit(uint32_t group_number) = 0;
+	virtual std::optional<std::string> toxGroupGetPassword(uint32_t group_number) = 0;
 
 	// returns message_id
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) = 0;
@@ -168,15 +171,15 @@ struct ToxI_raw {
 
 	virtual Tox_Err_Group_Invite_Friend toxGroupInviteFriend(uint32_t group_number, uint32_t friend_number) = 0;
 	virtual std::tuple<std::optional<uint32_t>, Tox_Err_Group_Invite_Accept> toxGroupInviteAccept(uint32_t friend_number, const std::vector<uint8_t>& invite_data, std::string_view name, std::string_view password) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Password toxGroupFounderSetPassword(uint32_t group_number, std::string_view password) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Topic_Lock toxGroupFounderSetTopicLock(uint32_t group_number, Tox_Group_Topic_Lock topic_lock) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Voice_State toxGroupFounderSetVoiceState(uint32_t group_number, Tox_Group_Voice_State voice_state) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Privacy_State toxGroupFounderSetPrivacyState(uint32_t group_number, Tox_Group_Privacy_State privacy_state) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Peer_Limit toxGroupFounderSetPeerLimit(uint32_t group_number, uint16_t max_peers) = 0;
-	//virtual Tox_Err_Group_Set_Ignore toxGroupSetIgnore(uint32_t group_number, uint32_t peer_id, bool ignore) = 0;
-	//virtual Tox_Err_Group_Mod_Set_Role toxGroupModSetRole(uint32_t group_number, uint32_t peer_id, Tox_Group_Role role) = 0;
-	//virtual Tox_Err_Group_Mod_Kick_Peer toxGroupModKickPeer(uint32_t group_number, uint32_t peer_id) = 0;
 
+	virtual Tox_Err_Group_Set_Password toxGroupSetPassword(uint32_t group_number, std::string_view password) = 0;
+	virtual Tox_Err_Group_Set_Topic_Lock toxGroupSetTopicLock(uint32_t group_number, bool topic_lock) = 0;
+	virtual Tox_Err_Group_Set_Voice_State toxGroupSetVoiceState(uint32_t group_number, Tox_Group_Voice_State voice_state) = 0;
+	virtual Tox_Err_Group_Set_Privacy_State toxGroupSetPrivacyState(uint32_t group_number, Tox_Group_Privacy_State privacy_state) = 0;
+	virtual Tox_Err_Group_Set_Peer_Limit toxGroupSetPeerLimit(uint32_t group_number, uint16_t max_peers) = 0;
+	virtual Tox_Err_Group_Set_Ignore toxGroupSetIgnore(uint32_t group_number, uint32_t peer_id, bool ignore) = 0;
+	virtual Tox_Err_Group_Set_Role toxGroupSetRole(uint32_t group_number, uint32_t peer_id, Tox_Group_Role role) = 0;
+	virtual Tox_Err_Group_Kick_Peer toxGroupKickPeer(uint32_t group_number, uint32_t peer_id) = 0;
 };
 
 // HACK: work around zppbits inability to pass string_view as parameter ( https://github.com/eyalz800/zpp_bits/issues/107 )

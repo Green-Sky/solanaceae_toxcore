@@ -1,5 +1,25 @@
 #include "./tox_default_impl.hpp"
 
+Tox_Err_Bootstrap ToxDefaultImpl::toxBootstrap(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key) {
+	if (public_key.size() != TOX_PUBLIC_KEY_SIZE) {
+		return TOX_ERR_BOOTSTRAP_NULL;
+	}
+
+	Tox_Err_Bootstrap err = TOX_ERR_BOOTSTRAP_OK;
+	tox_bootstrap(_tox, host.c_str(), port, public_key.data(), &err);
+	return err;
+}
+
+Tox_Err_Bootstrap ToxDefaultImpl::toxAddTcpRelay(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key) {
+	if (public_key.size() != TOX_PUBLIC_KEY_SIZE) {
+		return TOX_ERR_BOOTSTRAP_NULL;
+	}
+
+	Tox_Err_Bootstrap err = TOX_ERR_BOOTSTRAP_OK;
+	tox_add_tcp_relay(_tox, host.c_str(), port, public_key.data(), &err);
+	return err;
+}
+
 Tox_Connection ToxDefaultImpl::toxSelfGetConnectionStatus(void) {
 	return tox_self_get_connection_status(_tox);
 }
@@ -28,6 +48,13 @@ std::vector<uint8_t> ToxDefaultImpl::toxSelfGetPublicKey(void) {
 	self_pub.resize(TOX_PUBLIC_KEY_SIZE);
 	tox_self_get_public_key(_tox, self_pub.data());
 	return self_pub;
+}
+
+std::vector<uint8_t> ToxDefaultImpl::toxSelfGetSecretKey(void) {
+	std::vector<uint8_t> self_prv{};
+	self_prv.resize(TOX_SECRET_KEY_SIZE);
+	tox_self_get_secret_key(_tox, self_prv.data());
+	return self_prv;
 }
 
 Tox_Err_Set_Info ToxDefaultImpl::toxSelfSetName(std::string_view name) {
@@ -735,6 +762,65 @@ std::vector<uint32_t> ToxDefaultImpl::toxGroupGetList(void) {
 	return group_list;
 }
 
+std::optional<Tox_Group_Privacy_State> ToxDefaultImpl::toxGroupGetPrivacyState(uint32_t group_number) {
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
+	const auto state = tox_group_get_privacy_state(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
+		return state;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<Tox_Group_Voice_State> ToxDefaultImpl::toxGroupGetVoiceState(uint32_t group_number) {
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
+	const auto state = tox_group_get_voice_state(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
+		return state;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<bool> ToxDefaultImpl::toxGroupGetTopicLock(uint32_t group_number) {
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
+	const auto state = tox_group_get_topic_lock(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
+		return state == TOX_GROUP_TOPIC_LOCK_ENABLED;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<uint16_t> ToxDefaultImpl::toxGroupGetPeerLimit(uint32_t group_number) {
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
+	const auto state = tox_group_get_peer_limit(_tox, group_number, &err);
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
+		return state;
+	} else {
+		return std::nullopt;
+	}
+}
+
+std::optional<std::string> ToxDefaultImpl::toxGroupGetPassword(uint32_t group_number) {
+	std::string password;
+
+	Tox_Err_Group_State_Query err = TOX_ERR_GROUP_STATE_QUERY_OK;
+	const auto size = tox_group_get_password_size(_tox, group_number, &err);
+	if (err != TOX_ERR_GROUP_STATE_QUERY_OK) {
+		return std::nullopt;
+	}
+
+	password.resize(size);
+	tox_group_get_password(_tox, group_number, reinterpret_cast<uint8_t*>(password.data()), &err);
+
+	if (err == TOX_ERR_GROUP_STATE_QUERY_OK) {
+		return password;
+	} else {
+		return std::nullopt;
+	}
+}
+
 std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> ToxDefaultImpl::toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) {
 	Tox_Err_Group_Send_Message err = TOX_ERR_GROUP_SEND_MESSAGE_OK;
 	uint32_t message_id = tox_group_send_message(_tox, group_number, type, reinterpret_cast<const uint8_t*>(message.data()), message.size(), &err);
@@ -781,5 +867,58 @@ std::tuple<std::optional<uint32_t>, Tox_Err_Group_Invite_Accept> ToxDefaultImpl:
 	} else {
 		return {std::nullopt, err};
 	}
+}
+
+Tox_Err_Group_Set_Password ToxDefaultImpl::toxGroupSetPassword(uint32_t group_number, std::string_view password) {
+	Tox_Err_Group_Set_Password err = TOX_ERR_GROUP_SET_PASSWORD_OK;
+	tox_group_set_password(_tox, group_number, reinterpret_cast<const uint8_t*>(password.data()), password.size(), &err);
+	return err;
+}
+
+Tox_Err_Group_Set_Topic_Lock ToxDefaultImpl::toxGroupSetTopicLock(uint32_t group_number, bool topic_lock) {
+	Tox_Err_Group_Set_Topic_Lock err = TOX_ERR_GROUP_SET_TOPIC_LOCK_OK;
+	tox_group_set_topic_lock(
+		_tox,
+		group_number,
+		topic_lock ? TOX_GROUP_TOPIC_LOCK_ENABLED : TOX_GROUP_TOPIC_LOCK_DISABLED,
+		&err
+	);
+	return err;
+}
+
+Tox_Err_Group_Set_Voice_State ToxDefaultImpl::toxGroupSetVoiceState(uint32_t group_number, Tox_Group_Voice_State voice_state) {
+	Tox_Err_Group_Set_Voice_State err = TOX_ERR_GROUP_SET_VOICE_STATE_OK;
+	tox_group_set_voice_state(_tox, group_number, voice_state, &err);
+	return err;
+}
+
+Tox_Err_Group_Set_Privacy_State ToxDefaultImpl::toxGroupSetPrivacyState(uint32_t group_number, Tox_Group_Privacy_State privacy_state) {
+	Tox_Err_Group_Set_Privacy_State err = TOX_ERR_GROUP_SET_PRIVACY_STATE_OK;
+	tox_group_set_privacy_state(_tox, group_number, privacy_state, &err);
+	return err;
+}
+
+Tox_Err_Group_Set_Peer_Limit ToxDefaultImpl::toxGroupSetPeerLimit(uint32_t group_number, uint16_t max_peers) {
+	Tox_Err_Group_Set_Peer_Limit err = TOX_ERR_GROUP_SET_PEER_LIMIT_OK;
+	tox_group_set_peer_limit(_tox, group_number, max_peers, &err);
+	return err;
+}
+
+Tox_Err_Group_Set_Ignore ToxDefaultImpl::toxGroupSetIgnore(uint32_t group_number, uint32_t peer_id, bool ignore) {
+	Tox_Err_Group_Set_Ignore err = TOX_ERR_GROUP_SET_IGNORE_OK;
+	tox_group_set_ignore(_tox, group_number, peer_id, ignore, &err);
+	return err;
+}
+
+Tox_Err_Group_Set_Role ToxDefaultImpl::toxGroupSetRole(uint32_t group_number, uint32_t peer_id, Tox_Group_Role role) {
+	Tox_Err_Group_Set_Role err = TOX_ERR_GROUP_SET_ROLE_OK;
+	tox_group_set_role(_tox, group_number, peer_id, role, &err);
+	return err;
+}
+
+Tox_Err_Group_Kick_Peer ToxDefaultImpl::toxGroupKickPeer(uint32_t group_number, uint32_t peer_id) {
+	Tox_Err_Group_Kick_Peer err = TOX_ERR_GROUP_KICK_PEER_OK;
+	tox_group_kick_peer(_tox, group_number, peer_id, &err);
+	return err;
 }
 

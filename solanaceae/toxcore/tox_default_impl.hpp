@@ -8,6 +8,9 @@ struct ToxDefaultImpl : public ToxI {
 
 	virtual ~ToxDefaultImpl(void) {}
 
+	Tox_Err_Bootstrap toxBootstrap(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key) override;
+	Tox_Err_Bootstrap toxAddTcpRelay(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key) override;
+
 	Tox_Connection toxSelfGetConnectionStatus(void) override;
 	uint32_t toxIterationInterval(void) override;
 
@@ -17,7 +20,7 @@ struct ToxDefaultImpl : public ToxI {
 	uint32_t toxSelfGetNospam(void) override;
 
 	std::vector<uint8_t> toxSelfGetPublicKey(void) override;
-	//virtual void toxSelfGetSecretKey(const Tox *tox, uint8_t *secret_key);
+	std::vector<uint8_t> toxSelfGetSecretKey(void) override;
 
 	Tox_Err_Set_Info toxSelfSetName(std::string_view name) override;
 	std::string toxSelfGetName(void) override;
@@ -122,11 +125,11 @@ struct ToxDefaultImpl : public ToxI {
 	size_t toxGroupGetNumberGroups(void) override;
 	std::vector<uint32_t> toxGroupGetList(void) override;
 
-	//virtual Tox_Group_Privacy_State toxGroupGetPrivacyState(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual Tox_Group_Voice_State toxGroupGetVoiceState(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual Tox_Group_Topic_Lock toxGroupGetTopicLock(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual uint16_t toxGroupGetPeerLimit(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
-	//virtual std::string toxGroupGetPassword(uint32_t group_number, Tox_Err_Group_State_Queries *error) = 0;
+	std::optional<Tox_Group_Privacy_State> toxGroupGetPrivacyState(uint32_t group_number) override;
+	std::optional<Tox_Group_Voice_State> toxGroupGetVoiceState(uint32_t group_number) override;
+	std::optional<bool> toxGroupGetTopicLock(uint32_t group_number) override;
+	std::optional<uint16_t> toxGroupGetPeerLimit(uint32_t group_number) override;
+	std::optional<std::string> toxGroupGetPassword(uint32_t group_number) override;
 
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Message> toxGroupSendMessage(uint32_t group_number, Tox_Message_Type type, std::string_view message) override;
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Send_Private_Message> toxGroupSendPrivateMessage(uint32_t group_number, uint32_t peer_id, Tox_Message_Type type, std::string_view message) override;
@@ -136,14 +139,14 @@ struct ToxDefaultImpl : public ToxI {
 
 	Tox_Err_Group_Invite_Friend toxGroupInviteFriend(uint32_t group_number, uint32_t friend_number) override;
 	std::tuple<std::optional<uint32_t>, Tox_Err_Group_Invite_Accept> toxGroupInviteAccept(uint32_t friend_number, const std::vector<uint8_t>& invite_data, std::string_view name, std::string_view password) override;
-	//virtual Tox_Err_Group_Founder_Set_Password toxGroupFounderSetPassword(uint32_t group_number, std::string_view password) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Topic_Lock toxGroupFounderSetTopicLock(uint32_t group_number, Tox_Group_Topic_Lock topic_lock) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Voice_State toxGroupFounderSetVoiceState(uint32_t group_number, Tox_Group_Voice_State voice_state) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Privacy_State toxGroupFounderSetPrivacyState(uint32_t group_number, Tox_Group_Privacy_State privacy_state) = 0;
-	//virtual Tox_Err_Group_Founder_Set_Peer_Limit toxGroupFounderSetPeerLimit(uint32_t group_number, uint16_t max_peers) = 0;
-	//virtual Tox_Err_Group_Set_Ignore toxGroupSetIgnore(uint32_t group_number, uint32_t peer_id, bool ignore) = 0;
-	//virtual Tox_Err_Group_Mod_Set_Role toxGroupModSetRole(uint32_t group_number, uint32_t peer_id, Tox_Group_Role role) = 0;
-	//virtual Tox_Err_Group_Mod_Kick_Peer toxGroupModKickPeer(uint32_t group_number, uint32_t peer_id) = 0;
 
+	Tox_Err_Group_Set_Password toxGroupSetPassword(uint32_t group_number, std::string_view password) override;
+	Tox_Err_Group_Set_Topic_Lock toxGroupSetTopicLock(uint32_t group_number, bool topic_lock) override;
+	Tox_Err_Group_Set_Voice_State toxGroupSetVoiceState(uint32_t group_number, Tox_Group_Voice_State voice_state) override;
+	Tox_Err_Group_Set_Privacy_State toxGroupSetPrivacyState(uint32_t group_number, Tox_Group_Privacy_State privacy_state) override;
+	Tox_Err_Group_Set_Peer_Limit toxGroupSetPeerLimit(uint32_t group_number, uint16_t max_peers) override;
+	Tox_Err_Group_Set_Ignore toxGroupSetIgnore(uint32_t group_number, uint32_t peer_id, bool ignore) override;
+	Tox_Err_Group_Set_Role toxGroupSetRole(uint32_t group_number, uint32_t peer_id, Tox_Group_Role role) override;
+	Tox_Err_Group_Kick_Peer toxGroupKickPeer(uint32_t group_number, uint32_t peer_id) override;
 };
 
