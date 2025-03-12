@@ -58,7 +58,7 @@ struct ToxEventI {
 	VIRT_EVENT(Tox_Event_Group_Join_Fail)
 	VIRT_EVENT(Tox_Event_Group_Moderation)
 
-	VIRT_EVENT(Tox_Event_Dht_Get_Nodes_Response);
+	VIRT_EVENT(Tox_Event_Dht_Nodes_Response)
 
 #undef VIRT_EVENT
 };
@@ -154,6 +154,8 @@ constexpr Tox_Event_Type tox_event_from_string(const std::string_view str) {
 	CASE_E_TYPE(TOX_EVENT_GROUP_SELF_JOIN)
 	CASE_E_TYPE(TOX_EVENT_GROUP_JOIN_FAIL)
 	CASE_E_TYPE(TOX_EVENT_GROUP_MODERATION)
+
+	CASE_E_TYPE(TOX_EVENT_DHT_GET_NODES_RESPONSE)
 
 	return Tox_Event_Type::TOX_EVENT_INVALID;
 

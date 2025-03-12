@@ -57,7 +57,7 @@ struct ToxEventLogger : public ToxEventI {
 	OVER_EVENT(Tox_Event_Group_Join_Fail)
 	OVER_EVENT(Tox_Event_Group_Moderation)
 
-	OVER_EVENT(Tox_Event_Dht_Get_Nodes_Response)
+	OVER_EVENT(Tox_Event_Dht_Nodes_Response)
 
 #undef OVER_EVENT
 

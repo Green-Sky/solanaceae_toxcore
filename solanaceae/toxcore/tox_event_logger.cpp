@@ -221,7 +221,7 @@ bool ToxEventLogger::onToxEvent(const Tox_Event_Group_Moderation* e) {
 	return false;
 }
 
-bool ToxEventLogger::onToxEvent(const Tox_Event_Dht_Get_Nodes_Response* e) {
+bool ToxEventLogger::onToxEvent(const Tox_Event_Dht_Nodes_Response* e) {
 	_out << "TOX_EVENT: " << tox_event_to_string(TOX_EVENT_DHT_GET_NODES_RESPONSE)
 		//<< " pub:" << tox_event_dht_get_nodes_response_get_public_key(e)
 		//<< " ip:" << tox_event_dht_get_nodes_response_get_ip(e)
