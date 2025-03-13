@@ -155,7 +155,7 @@ constexpr Tox_Event_Type tox_event_from_string(const std::string_view str) {
 	CASE_E_TYPE(TOX_EVENT_GROUP_JOIN_FAIL)
 	CASE_E_TYPE(TOX_EVENT_GROUP_MODERATION)
 
-	CASE_E_TYPE(TOX_EVENT_DHT_GET_NODES_RESPONSE)
+	CASE_E_TYPE(TOX_EVENT_DHT_NODES_RESPONSE)
 
 	return Tox_Event_Type::TOX_EVENT_INVALID;
 

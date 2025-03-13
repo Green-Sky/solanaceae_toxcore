@@ -63,14 +63,7 @@ void ToxEventProviderBase::dispatchEvents(const Tox_Events* events) {
 	HANDLE_EVENT(GROUP_SELF_JOIN, group_self_join);
 	HANDLE_EVENT(GROUP_JOIN_FAIL, group_join_fail);
 	HANDLE_EVENT(GROUP_MODERATION, group_moderation);
-	// FIXME: get pr merged and update
-			case Tox_Event_Type::TOX_EVENT_DHT_GET_NODES_RESPONSE: \
-				for (auto* tei : _subscribers.at(tox_event_get_type(event))) { \
-					if (tei->onToxEvent(tox_event_get_dht_nodes_response(event))) { \
-						break; \
-					} \
-				} \
-				break;
+	HANDLE_EVENT(DHT_NODES_RESPONSE, dht_nodes_response);
 #undef HANDLE_EVENT
 
 			default:
