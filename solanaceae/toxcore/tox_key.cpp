@@ -1,16 +1,23 @@
 #include "./tox_key.hpp"
 
+#include <stdexcept>
 #include <cassert>
 
 ToxKey::ToxKey(const std::vector<std::uint8_t>& v) {
-	assert(v.size() == data.size());
+	assert(v.size() >= data.size());
+	if (v.size() < data.size()) {
+		throw std::runtime_error("tox key construction size mismatch");
+	}
 	for (size_t i = 0; i < data.size(); i++) {
 		data[i] = v[i];
 	}
 }
 
 ToxKey::ToxKey(const std::uint8_t* d, std::size_t s) {
-	assert(s == data.size());
+	assert(s >= data.size());
+	if (s < data.size()) {
+		throw std::runtime_error("tox key construction size mismatch");
+	}
 	for (size_t i = 0; i < data.size(); i++) {
 		data[i] = d[i];
 	}

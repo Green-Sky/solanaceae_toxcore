@@ -1,5 +1,7 @@
 #include "./tox_default_impl.hpp"
 
+#include <stdexcept>
+
 Tox_Err_Bootstrap ToxDefaultImpl::toxBootstrap(const std::string& host, uint16_t port, const std::vector<uint8_t>& public_key) {
 	if (public_key.size() != TOX_PUBLIC_KEY_SIZE) {
 		return TOX_ERR_BOOTSTRAP_NULL;
@@ -92,7 +94,9 @@ Tox_User_Status ToxDefaultImpl::toxSelfGetStatus(void) {
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> ToxDefaultImpl::toxFriendAdd(const std::vector<uint8_t>& address, std::string_view message) {
-	// TODO: check size
+	if (address.size() != TOX_ADDRESS_SIZE) {
+		throw std::invalid_argument("address size must be TOX_ADDRESS_SIZE");
+	}
 	Tox_Err_Friend_Add err = TOX_ERR_FRIEND_ADD_OK;
 	auto res = tox_friend_add(_tox, address.data(), reinterpret_cast<const uint8_t*>(message.data()), message.size(), &err);
 	if (err == TOX_ERR_FRIEND_ADD_OK) {
@@ -103,7 +107,9 @@ std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> ToxDefaultImpl::toxFrien
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Friend_Add> ToxDefaultImpl::toxFriendAddNorequest(const std::vector<uint8_t>& public_key) {
-	// TODO: check size
+	if (public_key.size() != TOX_PUBLIC_KEY_SIZE) {
+		throw std::invalid_argument("public_key size must be TOX_PUBLIC_KEY_SIZE");
+	}
 	Tox_Err_Friend_Add err = TOX_ERR_FRIEND_ADD_OK;
 	auto res = tox_friend_add_norequest(_tox, public_key.data(), &err);
 	if (err == TOX_ERR_FRIEND_ADD_OK) {
@@ -120,7 +126,9 @@ Tox_Err_Friend_Delete ToxDefaultImpl::toxFriendDelete(uint32_t friend_number) {
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Friend_By_Public_Key> ToxDefaultImpl::toxFriendByPublicKey(const std::vector<uint8_t>& public_key) {
-	// TODO: check size
+	if (public_key.size() != TOX_PUBLIC_KEY_SIZE) {
+		throw std::invalid_argument("public_key size must be TOX_PUBLIC_KEY_SIZE");
+	}
 	Tox_Err_Friend_By_Public_Key err = TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK;
 	auto res = tox_friend_by_public_key(_tox, public_key.data(), &err);
 	if (err == TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK) {
@@ -268,7 +276,9 @@ std::tuple<std::optional<std::vector<uint8_t>>, Tox_Err_File_Get> ToxDefaultImpl
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_File_Send> ToxDefaultImpl::toxFileSend(uint32_t friend_number, uint32_t kind, uint64_t file_size, const std::vector<uint8_t>& file_id, std::string_view filename) {
-	// TODO: check file_id size
+	if (file_id.size() != TOX_FILE_ID_LENGTH) {
+		throw std::invalid_argument("file_id size must be TOX_FILE_ID_LENGTH");
+	}
 	Tox_Err_File_Send err = TOX_ERR_FILE_SEND_OK;
 	auto res = tox_file_send(_tox, friend_number, kind, file_size, file_id.data(), reinterpret_cast<const uint8_t*>(filename.data()), filename.size(), &err);
 	if (err == TOX_ERR_FILE_SEND_OK) {
@@ -516,8 +526,10 @@ std::tuple<std::optional<uint32_t>, Tox_Err_Group_New> ToxDefaultImpl::toxGroupN
 }
 
 std::tuple<std::optional<uint32_t>, Tox_Err_Group_Join> ToxDefaultImpl::toxGroupJoin(const std::vector<uint8_t>& chat_id, std::string_view name, std::string_view password) {
+	if (chat_id.size() != TOX_GROUP_CHAT_ID_SIZE) {
+		throw std::invalid_argument("chat_id size must be TOX_GROUP_CHAT_ID_SIZE");
+	}
 	Tox_Err_Group_Join err = TOX_ERR_GROUP_JOIN_OK;
-	// TODO: check size
 	auto res = tox_group_join(_tox, chat_id.data(), reinterpret_cast<const uint8_t*>(name.data()), name.size(), reinterpret_cast<const uint8_t*>(password.data()), password.size(), &err);
 	if (err == TOX_ERR_GROUP_JOIN_OK) {
 		return {res, err};
